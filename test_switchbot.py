@@ -8,50 +8,66 @@ import base64
 import requests
 from dotenv import load_dotenv
 
+def get_env_credentials():
+    load_dotenv()
 
-load_dotenv()
+    token = os.getenv("SWITCHBOT_TOKEN")
+    secret = os.getenv("SWITCHBOT_SECRET")
+    return token, secret
 
-token = os.getenv("SWITCHBOT_TOKEN")
-secret = os.getenv("SWITCHBOT_SECRET")
+def create_headers(token, secret):
+    nonce = str(uuid.uuid4()) # Get Random identifier for request
+    timestamp = str(int(time.time() * 1000)) # Required for SwitchBot (13-digit timestamp in ms)
 
-nonce = str(uuid.uuid4()) # Get Random identifier for request
-timestamp = str(int(time.time() * 1000)) # Required for SwitchBot (13-digit timestamp in ms)
+    string_to_sign = token + timestamp + nonce
 
-string_to_sign = token + timestamp + nonce
+    # Cryptographic Signature
+    signature = base64.b64encode(
+        hmac.new(
+            secret.encode("utf-8"),
+            string_to_sign.encode("utf-8"),
+            hashlib.sha256
+        ).digest()
+    ).decode("utf-8")
 
-# Cryptographic Signature
-signature = base64.b64encode(
-    hmac.new(
-        secret.encode("utf-8"),
-        string_to_sign.encode("utf-8"),
-        hashlib.sha256
-    ).digest()
-).decode("utf-8")
+    headers = {
+        "Authorization": token,
+        "sign": signature,
+        "nonce": nonce,
+        "t": timestamp,
+    }
+    return headers
 
-headers = {
-    "Authorization": token,
-    "sign": signature,
-    "nonce": nonce,
-    "t": timestamp,
-}
+def get_device_data(token, secret):
+    
+    headers = create_headers(token, secret)
+    # Actual internet communication
+    response = requests.get(
+        "https://api.switch-bot.com/v1.1/devices",
+        headers=headers
+    )
 
-# Actual internet communication
-response = requests.get(
-    "https://api.switch-bot.com/v1.1/devices",
-    headers=headers
-)
+    print("HTTP status:", response.status_code)
 
-print("HTTP status:", response.status_code)
+    data = response.json()
 
-data = response.json()
+    print("API status:", data["statusCode"])
+    print("Message:", data["message"])
 
-print("API status:", data["statusCode"])
-print("Message:", data["message"])
+    print("\nDevices:")
+    for device in data["body"]["deviceList"]:
+        print(f"  Name: {device['deviceName']}")
+        print(f"  Type: {device['deviceType']}")
+        print(f"  ID:   {device['deviceId']}")
+        print()
+        if device["deviceType"] == "AI Art Frame":
+            device_id = device["deviceId"]
+            return device
+    print("Could not find an AI Art Frame.")
+    return None
 
-print("\nDevices:")
 
-for device in data["body"]["deviceList"]:
-    print(f"  Name: {device['deviceName']}")
-    print(f"  Type: {device['deviceType']}")
-    print(f"  ID:   {device['deviceId']}")
-    print()
+if __name__ == "__main__":
+    token, secret = get_env_credentials()
+    device_data = get_device_data(token, secret)
+    print(f"Found AI Art Frame: {device_data["deviceId"]}")
