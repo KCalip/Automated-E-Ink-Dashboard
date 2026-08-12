@@ -1,0 +1,45 @@
+{
+  "canvas": {"src_w": 1086, "src_h": 1448, "out_w": 1200, "out_h": 1600},
+  "palette": {
+    "cream": "#F8F1E2", "teal": "#2F5B61", "muted_teal": "#56868C",
+    "olive": "#9D8E5C", "gold": "#E1962A", "orange": "#CF6D2E",
+    "dark_sage": "#5D6A60", "ink": "#2F5B61"
+  },
+  "fonts": {
+    "heavy": "Poppins-Bold",
+    "semi": "Poppins-SemiBold",
+    "body": "Poppins-Regular"
+  },
+  "weather": {
+    "temp":       {"xy": [470, 105], "size": 96, "font": "heavy", "color": "teal", "anchor": "la"},
+    "condition":  {"xy": [472, 232], "size": 34, "font": "semi", "color": "muted_teal", "anchor": "la"},
+    "feels_like": {"xy": [472, 280], "size": 24, "font": "body", "color": "dark_sage", "anchor": "la"},
+    "humidity":   {"xy": [955, 160], "size": 26, "font": "semi", "color": "teal", "anchor": "ra"},
+    "wind":       {"xy": [955, 214], "size": 26, "font": "semi", "color": "teal", "anchor": "ra"},
+    "uv":         {"xy": [955, 268], "size": 26, "font": "semi", "color": "teal", "anchor": "ra"}
+  },
+  "hourly": {
+    "cols_center_x": [352, 456, 560, 664, 768, 870, 976],
+    "time_y": 405,
+    "icon_cy": 478,
+    "icon_r": 34,
+    "temp_y": 545,
+    "time_size": 20,
+    "temp_size": 26,
+    "time_color": "dark_sage",
+    "temp_color": "teal"
+  },
+  "parks": {
+    "time_x": 1035,
+    "rows_y": [768, 858, 958, 1058],
+    "size": 30,
+    "font": "semi",
+    "color": "teal",
+    "anchor": "ra"
+  },
+  "history": {
+    "date":     {"xy": [362, 1178], "size": 22, "font": "semi", "color": "orange", "anchor": "la"},
+    "headline": {"xy": [362, 1210], "size": 32, "font": "heavy", "color": "teal", "anchor": "la", "max_w": 300, "leading": 36},
+    "blurb":    {"xy": [362, 1295], "size": 20, "font": "body", "color": "dark_sage", "anchor": "la", "max_w": 300, "leading": 27}
+  }
+}

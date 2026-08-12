@@ -1,0 +1,11 @@
+{
+  "_comment": "Today in Disney History. Key = MM-DD. Add as many as you like; the script picks today's key, else falls back to a rotating evergreen entry. Keep blurb <= ~180 chars so it fits the card without crowding the castle art.",
+  "01-08": {"year": "1955", "headline": "Disneyland TV Special Airs", "blurb": "Walt introduced America to the still-under-construction Disneyland on ABC, six months before opening day."},
+  "05-27": {"year": "1992", "headline": "Disneyland Paris Opens", "blurb": "Disneyland Park officially opened its gates in Marne-la-Vallee, France, bringing the magic of Disney to Europe."},
+  "07-17": {"year": "1955", "headline": "Disneyland Opens", "blurb": "Walt Disney opened Disneyland in Anaheim, California, welcoming press and celebrities on a chaotic but historic first day."},
+  "08-05": {"year": "1963", "headline": "Enchanted Tiki Room Debuts", "blurb": "Walt Disney's Enchanted Tiki Room opened at Disneyland, the first attraction to use Audio-Animatronics."},
+  "08-06": {"year": "1969", "headline": "Haunted Mansion Foolish Mortals", "blurb": "Disneyland's Haunted Mansion had welcomed its first eager ghosts just days earlier, an instant Anaheim classic."},
+  "10-01": {"year": "1971", "headline": "Walt Disney World Opens", "blurb": "The Magic Kingdom opened in Florida, the first piece of Walt Disney World Resort near Orlando."},
+  "10-16": {"year": "1923", "headline": "The Disney Company Is Founded", "blurb": "Walt and Roy Disney founded the Disney Brothers Cartoon Studio, the humble start of the entire company."},
+  "12-05": {"year": "1901", "headline": "Walt Disney Is Born", "blurb": "Walter Elias Disney was born in Chicago, Illinois, the visionary who would reshape animation and theme parks."}
+}
