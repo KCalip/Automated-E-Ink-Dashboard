@@ -1,5 +1,6 @@
 .env
-output/
+output/*
+!output/dashboard.png
 assets/
 fonts/
 
