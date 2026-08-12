@@ -66,8 +66,21 @@ def get_device_data(token, secret):
     print("Could not find an AI Art Frame.")
     return None
 
+def get_frame_status(token, secret, device_id):
+    headers = create_headers(token, secret)
+    status_url = f"https://api.switch-bot.com/v1.1/devices/{device_id}/status"
+    print(status_url)
+    response = requests.get(
+        status_url,
+        headers=headers
+    )
+    data = response.json()
+    print(data)
+    return data
 
 if __name__ == "__main__":
     token, secret = get_env_credentials()
     device_data = get_device_data(token, secret)
-    print(f"Found AI Art Frame: {device_data["deviceId"]}")
+    device_id = device_data["deviceId"]
+    print(f"Found AI Art Frame: {device_id}")
+    get_frame_status(token, secret, device_id)
