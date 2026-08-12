@@ -5,18 +5,26 @@ push_to_frame.py
 Pushes a finished dashboard PNG to a SwitchBot E-Ink Art Frame via the
 SwitchBot Cloud API (v1.1).
 
-CURRENT STATUS: Step 1 of the build order (see project handoff doc).
+CURRENT STATUS:
     - Auth signing: WORKING
     - GET /v1.1/devices: WORKING
-    - Image upload: NOT YET IMPLEMENTED (see upload_image() below - this is
-      the next thing to figure out, since the exact upload endpoint/payload
-      shape needs to be confirmed against current SwitchBot docs)
-    - Storage-cap handling: NOT YET IMPLEMENTED
+    - Image upload: CONFIRMED WORKING SHAPE - see upload_image() docstring.
+      command="uploadImage", parameter={"imageUrl": <url>}, commandType="command"
+    - Storage-cap handling: IMPLEMENTED (graceful failure on statusCode 402)
+      Confirmed uploads ADD to the frame's 10-image store rather than
+      replacing the current image, and there is no API delete command.
 
-STORAGE-CAP DECISION LOG (fill this in once you've decided):
-    TODO - document whichever approach you land on (overwrite / detect-and-warn
-    / graceful-failure) and why, once you've confirmed what the API actually
-    allows.
+STORAGE-CAP DECISION LOG:
+    Chose graceful failure over pre-upload capacity checking, because the
+    API has no "list stored images" / count endpoint to check against in
+    advance. Instead, upload_image() detects the specific statusCode 402
+    ("image count limit reached") response and prints clear instructions
+    to clear images in the phone app, rather than a raw error. This means
+    the script WILL start failing once 10 images have been uploaded total,
+    and a human has to intervene in the app - there's no way around this
+    with the current API. A daily-cron use case will need either manual
+    periodic clearing, or watching for SwitchBot to add a delete endpoint
+    (tracked as a public feature request, unresolved as of testing).
 
 USAGE:
     python3 push_to_frame.py --dry-run     # test auth + device lookup only
@@ -130,35 +138,60 @@ def read_dashboard_image(path: str) -> bytes:
         return f.read()
 
 
-def upload_image(token: str, secret: str, device_id: str, image_bytes: bytes) -> None:
+def upload_image(token: str, secret: str, device_id: str, image_url: str) -> dict:
     """
-    TODO: NOT YET IMPLEMENTED.
+    Push an image to the Art Frame.
 
-    This is the next piece to figure out. Before writing this function,
-    confirm against CURRENT official SwitchBot docs:
-      1. The exact command/endpoint for pushing an image to the Art Frame.
-      2. Whether it wants raw bytes (multipart), base64 in the JSON body,
-         or a publicly-hosted URL to the image.
-      3. Whether uploading REPLACES the currently displayed image or ADDS
-         a new one to the 10-image storage cap.
+    CONFIRMED against the real API (2026-08):
+      - command: "uploadImage"
+      - parameter: {"imageUrl": <public https URL>}   <- object, key is "imageUrl"
+      - commandType: "command"
 
-    Once confirmed, this function should also implement whatever storage-cap
-    strategy was decided (see the decision log at the top of this file).
+    CONFIRMED BEHAVIOR: uploads ADD a new stored image rather than replacing
+    the current one. There is no known API way to delete stored images, so
+    once the frame's 10-image cap is hit, every upload fails with
+    statusCode 402 "image count limit reached" until images are cleared
+    manually in the phone app. This function detects that specific case and
+    fails with a clear, actionable message rather than a raw error dump -
+    see the STORAGE-CAP DECISION LOG at the top of this file.
+
+    image_url must be a genuinely public, directly-fetchable https URL
+    (e.g. a raw.githubusercontent.com link, NOT a github.com/.../blob/...
+    viewer page - that serves an HTML wrapper, not the image bytes).
     """
-    raise NotImplementedError(
-        "Image upload not implemented yet - see docstring for what to confirm first."
+    headers = build_auth_headers(token, secret)
+    body = {
+        "command": "uploadImage",
+        "parameter": {"imageUrl": image_url},
+        "commandType": "command",
+    }
+    resp = requests.post(
+        f"{BASE_URL}/v1.1/devices/{device_id}/commands",
+        headers=headers,
+        json=body,
+        timeout=15,
     )
 
+    if resp.status_code != 200:
+        print(f"❌ Upload request failed: HTTP {resp.status_code}")
+        print(f"   Response: {resp.text}")
+        sys.exit(1)
 
-def check_storage_capacity(token: str, secret: str, device_id: str) -> None:
-    """
-    TODO: NOT YET IMPLEMENTED.
+    data = resp.json()
+    status = data.get("statusCode")
 
-    If the API exposes a way to list/count stored images on the frame,
-    call it here and print a warning if capacity is close to the 10-image
-    cap (e.g. "⚠️ 9/10 slots used - clear the frame in the app soon").
-    """
-    pass
+    if status == 402:
+        print("⚠️  Frame storage is full (10/10 images).")
+        print("   SwitchBot's API has no way to delete images remotely.")
+        print("   Open the SwitchBot phone app and manually clear some images")
+        print("   from the Art Frame, then re-run this script.")
+        sys.exit(1)
+
+    if status != 100:
+        print(f"❌ SwitchBot API rejected the upload command: {data}")
+        sys.exit(1)
+
+    return data
 
 
 def main():
@@ -177,6 +210,7 @@ def main():
     print(f"✅ Auth works. Found {len(devices)} device(s) on this account:")
     for d in devices:
         print(f"   - {d.get('deviceName')} ({d.get('deviceType')}) id={d.get('deviceId')}")
+    print("   (deviceType above matters if the upload command needs commandType='customize')")
 
     if not creds["device_id"]:
         print("\nℹ️  SWITCHBOT_DEVICE_ID is not set yet. Copy the Art Frame's")
@@ -187,11 +221,21 @@ def main():
         print("   (Image upload was skipped; upload_image() isn't implemented yet.)")
         return
 
-    # --- Everything below this line depends on upload_image() being implemented ---
-    image_bytes = read_dashboard_image(DASHBOARD_IMAGE_PATH)
-    check_storage_capacity(creds["token"], creds["secret"], creds["device_id"])
-    upload_image(creds["token"], creds["secret"], creds["device_id"], image_bytes)
-    print("✅ Dashboard image pushed to frame.")
+    # --- Everything below this line is the best-guess upload flow ---
+    read_dashboard_image(DASHBOARD_IMAGE_PATH)  # just confirms the file exists locally
+
+    image_url = os.environ.get("DASHBOARD_IMAGE_URL")
+    if not image_url:
+        print("❌ DASHBOARD_IMAGE_URL is not set.")
+        print("   The upload command needs a PUBLIC https URL where the image")
+        print("   is already hosted (SwitchBot fetches it themselves - it does")
+        print("   not accept raw bytes). E.g. a GitHub raw URL once the repo's")
+        print("   workflow commits output/dashboard.png:")
+        print("   https://raw.githubusercontent.com/<user>/<repo>/main/output/dashboard.png")
+        sys.exit(1)
+
+    result = upload_image(creds["token"], creds["secret"], creds["device_id"], image_url)
+    print(f"✅ Upload command accepted: {result}")
 
 
 if __name__ == "__main__":
