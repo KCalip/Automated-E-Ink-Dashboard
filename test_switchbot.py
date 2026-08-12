@@ -41,7 +41,17 @@ response = requests.get(
     headers=headers
 )
 
-print(response.status_code)
+print("HTTP status:", response.status_code)
+
 data = response.json()
 
-print(data)
+print("API status:", data["statusCode"])
+print("Message:", data["message"])
+
+print("\nDevices:")
+
+for device in data["body"]["deviceList"]:
+    print(f"  Name: {device['deviceName']}")
+    print(f"  Type: {device['deviceType']}")
+    print(f"  ID:   {device['deviceId']}")
+    print()
