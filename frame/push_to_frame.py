@@ -224,8 +224,8 @@ def main():
     # --- Everything below this line is the best-guess upload flow ---
     read_dashboard_image(DASHBOARD_IMAGE_PATH)  # just confirms the file exists locally
 
-    image_url = os.environ.get("DASHBOARD_IMAGE_URL")
-    if not image_url:
+    image_url_base = os.environ.get("DASHBOARD_IMAGE_URL")
+    if not image_url_base:
         print("❌ DASHBOARD_IMAGE_URL is not set.")
         print("   The upload command needs a PUBLIC https URL where the image")
         print("   is already hosted (SwitchBot fetches it themselves - it does")
@@ -233,6 +233,14 @@ def main():
         print("   workflow commits output/dashboard.png:")
         print("   https://raw.githubusercontent.com/<user>/<repo>/main/output/dashboard.png")
         sys.exit(1)
+
+    # Cache-bust: GitHub's CDN and/or SwitchBot's own fetcher may not re-fetch
+    # a URL they've seen before, even though the file content changed. Append
+    # a timestamp query param (ignored by GitHub for routing, but makes the
+    # full URL unique every run) so both layers are forced to fetch fresh.
+    separator = "&" if "?" in image_url_base else "?"
+    image_url = f"{image_url_base}{separator}t={int(time.time())}"
+    print(f"🔗 Using cache-busted image URL: {image_url}")
 
     result = upload_image(creds["token"], creds["secret"], creds["device_id"], image_url)
     print(f"✅ Upload command accepted: {result}")

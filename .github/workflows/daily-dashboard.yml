@@ -1,0 +1,52 @@
+name: Daily Dashboard Update
+
+# Runs once a day, plus lets you trigger it manually from the Actions tab
+# to test without waiting for the schedule.
+on:
+  schedule:
+    - cron: "0 11 * * *"  # 11:00 UTC daily - adjust to your preferred time
+  workflow_dispatch: {}
+
+permissions:
+  contents: write  # needed so this workflow can commit the updated image
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pillow requests python-dotenv
+
+      - name: Generate today's dashboard image
+        working-directory: generator
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+        run: python3 compose.py
+
+      - name: Commit updated dashboard image
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add output/dashboard.png
+          # Only commit if the image actually changed - avoids empty commits
+          # on days the pipeline happens to produce byte-identical output.
+          git diff --quiet --cached || git commit -m "Update daily dashboard image"
+          git push
+
+      - name: Push image to SwitchBot frame
+        env:
+          SWITCHBOT_TOKEN: ${{ secrets.SWITCHBOT_TOKEN }}
+          SWITCHBOT_SECRET: ${{ secrets.SWITCHBOT_SECRET }}
+          SWITCHBOT_DEVICE_ID: ${{ secrets.SWITCHBOT_DEVICE_ID }}
+          # Base URL only - push_to_frame.py appends its own cache-busting
+          # timestamp automatically, so this stays constant here.
+          DASHBOARD_IMAGE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/output/dashboard.png
+        run: python3 frame/push_to_frame.py

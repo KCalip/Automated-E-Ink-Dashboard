@@ -129,8 +129,9 @@ def compose(data, eink=False):
 
     # scale to frame resolution
     out=bg.resize((LAYOUT["canvas"]["out_w"],LAYOUT["canvas"]["out_h"]), Image.LANCZOS)
-    os.makedirs(os.path.join(HERE,"output"), exist_ok=True)
-    out_path=os.path.join(HERE,"output/dashboard.png")
+    OUT_DIR = os.path.join(HERE, "..", "output")
+    os.makedirs(OUT_DIR, exist_ok=True)
+    out_path = os.path.join(OUT_DIR, "dashboard.png")
     out.save(out_path)
 
     if eink:
@@ -139,7 +140,7 @@ def compose(data, eink=False):
         for c in palette: flat+=list(c)
         flat+=[0]*(768-len(flat)); pim.putpalette(flat)
         q=out.quantize(palette=pim, dither=Image.FLOYDSTEINBERG).convert("RGB")
-        q.save(os.path.join(HERE,"output/dashboard_eink.png"))
+        q.save(os.path.join(OUT_DIR,"dashboard_eink.png"))
     return out_path
 
 if __name__=="__main__":
