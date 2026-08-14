@@ -3,17 +3,22 @@
 verify_display.py
 
 Failsafe check: confirms the SwitchBot Art Frame is actually displaying
-today's dashboard image, by comparing image CONTENT (a hash of the actual
-bytes), not URLs.
+today's dashboard image, by comparing images PERCEPTUALLY (a fuzzy visual
+hash), not by exact bytes or URL.
 
 WHY NOT COMPARE URLS:
 SwitchBot re-hosts every uploaded image on its own S3 bucket and returns a
 fresh, temporary signed URL (different every time you check status) - it
-does NOT remember or echo back the source URL you uploaded from. So the
-`imageUrl` in a status response will NEVER match your GitHub raw URL, even
-when the frame IS correctly showing today's dashboard. The only reliable
-check is: download whatever's currently on display, hash it, and compare
-that hash to a hash of the file we actually uploaded.
+does NOT remember or echo back the source URL you uploaded from.
+
+WHY NOT COMPARE EXACT BYTES EITHER:
+SwitchBot converts the uploaded image to JPEG for storage (note the stored
+filename ends in .jpg, not .png) - JPEG is lossy, so even a correct,
+matching upload will NEVER produce identical bytes to the source PNG. An
+exact-hash check would report every single successful upload as a
+"mismatch." Instead this uses a perceptual hash (imagehash.phash), which is
+designed to tolerate exactly this kind of re-encoding noise while still
+catching genuinely different images (like the Great Wave).
 
 CONFIRMED against official docs (devices/others/ai-art-frame.md):
   - GET /v1.1/devices/{id}/status returns `imageUrl` (currently displayed,
@@ -30,12 +35,14 @@ Exits 0 if the frame is confirmed showing today's dashboard, 1 otherwise.
 """
 
 import argparse
-import hashlib
 import os
 import sys
 import time
+from io import BytesIO
 
 import requests
+from PIL import Image
+import imagehash
 
 from push_to_frame import (
     BASE_URL,
@@ -46,27 +53,35 @@ from push_to_frame import (
 
 MAX_CYCLE_ATTEMPTS = 10  # matches the frame's 10-image storage cap
 SECONDS_BETWEEN_ATTEMPTS = 3  # give the frame a moment to register each switch
+HASH_DIFFERENCE_THRESHOLD = 8  # perceptual hash "distance" allowed as still-a-match
+                                 # (0 = pixel-identical; SwitchBot re-encodes to JPEG,
+                                 # which is lossy, so exact byte/pixel matches never
+                                 # happen even on a correct upload - some tolerance
+                                 # is required. 8 is a reasonably strict starting point;
+                                 # raise it if genuine matches are still being flagged
+                                 # as mismatches, lower it if false positives occur.)
 
 
-def hash_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
+def perceptual_hash(image: Image.Image):
+    return imagehash.phash(image)
 
 
-def hash_local_file(path: str) -> str:
+def hash_local_file(path: str):
     if not os.path.exists(path):
         print(f"❌ Local dashboard image not found at: {path}")
         sys.exit(1)
-    with open(path, "rb") as f:
-        return hash_bytes(f.read())
+    with Image.open(path) as img:
+        return perceptual_hash(img.convert("RGB"))
 
 
-def hash_remote_image(url: str) -> str:
-    """Download the currently-displayed image and hash its bytes."""
+def hash_remote_image(url: str):
+    """Download the currently-displayed image and compute its perceptual hash."""
     resp = requests.get(url, timeout=20)
     if resp.status_code != 200:
         print(f"❌ Could not fetch currently-displayed image: HTTP {resp.status_code}")
         sys.exit(1)
-    return hash_bytes(resp.content)
+    with Image.open(BytesIO(resp.content)) as img:
+        return perceptual_hash(img.convert("RGB"))
 
 
 def get_status(token: str, secret: str, device_id: str) -> dict:
@@ -126,7 +141,7 @@ def main():
 
     print("🔍 Hashing local dashboard image (the source of truth)...")
     expected_hash = hash_local_file(DASHBOARD_IMAGE_PATH)
-    print(f"   {DASHBOARD_IMAGE_PATH} -> {expected_hash[:16]}...")
+    print(f"   {DASHBOARD_IMAGE_PATH} -> {expected_hash}")
 
     print("🔍 Checking frame status...")
     status = get_status(creds["token"], creds["secret"], creds["device_id"])
@@ -145,13 +160,14 @@ def main():
         sys.exit(1)
 
     current_hash = hash_remote_image(current_url)
-    print(f"   Currently displayed content hash: {current_hash[:16]}...")
+    difference = current_hash - expected_hash
+    print(f"   Currently displayed perceptual hash: {current_hash} (difference: {difference})")
 
-    if current_hash == expected_hash:
-        print("✅ Frame is showing today's dashboard (content matches). Nothing to do.")
+    if difference <= HASH_DIFFERENCE_THRESHOLD:
+        print("✅ Frame is showing today's dashboard (image matches within tolerance). Nothing to do.")
         sys.exit(0)
 
-    print("⚠️  MISMATCH - displayed image content does not match today's dashboard.")
+    print(f"⚠️  MISMATCH - displayed image differs too much (distance {difference} > {HASH_DIFFERENCE_THRESHOLD}).")
 
     if not args.fix:
         print("   Run again with --fix to cycle through stored images with `next`.")
@@ -164,10 +180,14 @@ def main():
 
         status = get_status(creds["token"], creds["secret"], creds["device_id"])
         current_url = status.get("imageUrl", "")
-        current_hash = hash_remote_image(current_url) if current_url else ""
-        print(f"   Attempt {attempt}/{MAX_CYCLE_ATTEMPTS}: hash {current_hash[:16]}...")
+        if not current_url:
+            print(f"   Attempt {attempt}/{MAX_CYCLE_ATTEMPTS}: no imageUrl in status, skipping")
+            continue
+        current_hash = hash_remote_image(current_url)
+        difference = current_hash - expected_hash
+        print(f"   Attempt {attempt}/{MAX_CYCLE_ATTEMPTS}: hash {current_hash} (difference: {difference})")
 
-        if current_hash == expected_hash:
+        if difference <= HASH_DIFFERENCE_THRESHOLD:
             print(f"✅ Found it after {attempt} `next` command(s).")
             sys.exit(0)
 
