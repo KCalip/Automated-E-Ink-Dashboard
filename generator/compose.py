@@ -1,152 +1,113 @@
-"""
-compose.py - draw live data onto the static background, output frame-ready PNG.
-
-Usage:
-  python3 compose.py            # uses live data (or sample fallback), writes output/
-  python3 compose.py --eink     # also writes a 6-color quantized preview
-
-Outputs:
-  output/dashboard.png       (1200x1600, what you upload to the frame)
-  output/dashboard_eink.png  (6-color simulated preview, only with --eink)
-"""
-import os, sys, json
+"""compose.py - draw live data onto the new template. python3 compose.py [--eink]"""
+import os, sys, json, math
 from PIL import Image, ImageDraw, ImageFont
 from fetch_data import gather
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-LAYOUT = json.load(open(os.path.join(HERE, "layout.json")))
-PAL = LAYOUT["palette"]
-FONT_FILES = {
-    "Poppins-Bold": "fonts/Poppins-Bold.ttf",
-    "Poppins-SemiBold": "fonts/Poppins-SemiBold.ttf",
-    "Poppins-Regular": "fonts/Poppins-Regular.ttf",
-}
-FONT_ALIAS = {"heavy":"Poppins-Bold","semi":"Poppins-SemiBold","body":"Poppins-Regular"}
+L = json.load(open(os.path.join(HERE,"layout.json")))
+PAL = L["palette"]
+FA = {"heavy":"Poppins-Bold","semi":"Poppins-SemiBold","body":"Poppins-Regular"}
+FF = {"Poppins-Bold":"fonts/Poppins-Bold.ttf","Poppins-SemiBold":"fonts/Poppins-SemiBold.ttf","Poppins-Regular":"fonts/Poppins-Regular.ttf"}
 
 def hexrgb(h): h=h.lstrip("#"); return tuple(int(h[i:i+2],16) for i in (0,2,4))
-def col(name): return hexrgb(PAL[name])
-_font_cache={}
-def font(alias, size):
-    fam = FONT_ALIAS.get(alias, alias)
-    key=(fam,size)
-    if key not in _font_cache:
-        p=os.path.join(HERE, FONT_FILES.get(fam,"fonts/Poppins-Regular.ttf"))
-        _font_cache[key]=ImageFont.truetype(p,size)
-    return _font_cache[key]
+def col(n): return hexrgb(PAL[n])
+_fc={}
+def font(alias,size):
+    fam=FA.get(alias,alias); k=(fam,size)
+    if k not in _fc: _fc[k]=ImageFont.truetype(os.path.join(HERE,FF[fam]),size)
+    return _fc[k]
+def txt(d,spec,s):
+    d.text(tuple(spec["xy"]), str(s), font=font(spec["font"],spec["size"]),
+           fill=col(spec["color"]), anchor=spec.get("anchor","la"))
+def wrap(d,s,f,w):
+    out=[]; cur=""
+    for word in s.split():
+        t=(cur+" "+word).strip()
+        if d.textlength(t,font=f)<=w: cur=t
+        else: out.append(cur); cur=word
+    if cur: out.append(cur)
+    return out
 
-def draw_text(d, spec, text):
-    f=font(spec["font"], spec["size"])
-    anchor=spec.get("anchor","la")
-    d.text(tuple(spec["xy"]), str(text), font=f, fill=col(spec["color"]), anchor=anchor)
+# sample the cream background so icon-cover discs blend in
+def bg_sample(img,x,y): return img.getpixel((max(0,min(x,img.width-1)),max(0,min(y,img.height-1))))
 
-def wrap(d, text, f, max_w):
-    words=text.split(); lines=[]; cur=""
-    for w in words:
-        t=(cur+" "+w).strip()
-        if d.textlength(t,font=f)<=max_w: cur=t
-        else:
-            if cur: lines.append(cur)
-            cur=w
-    if cur: lines.append(cur)
-    return lines
-
-# ---- weather icon glyphs, drawn as flat shapes (no baked art, e-ink safe) ----
-def draw_icon(d, cx, cy, r, cond):
-    c = cond.lower()
-    gold=col("gold"); teal=col("muted_teal"); sage=hexrgb("#A2AB9F"); ink=col("ink")
-    if "clear" in c or "sun" in c:
-        d.ellipse([cx-r*0.55,cy-r*0.55,cx+r*0.55,cy+r*0.55], fill=gold)
-        import math
+def draw_icon(d,cx,cy,r,cond,cover):
+    c=cond.lower()
+    gold=hexrgb("#E8A21E"); cream=hexrgb("#FBF3E0"); sage=hexrgb("#C9CDB8"); teal=hexrgb("#3E6B6B")
+    if cover:
+        d.ellipse([cx-r-6,cy-r-6,cx+r+6,cy+r+6], fill=cover)
+    if "clear" in c:
+        d.ellipse([cx-r*0.6,cy-r*0.6,cx+r*0.6,cy+r*0.6],fill=gold)
         for a in range(0,360,45):
-            x=cx+math.cos(math.radians(a))*r; y=cy+math.sin(math.radians(a))*r
-            x2=cx+math.cos(math.radians(a))*r*0.72; y2=cy+math.sin(math.radians(a))*r*0.72
-            d.line([x2,y2,x,y], fill=gold, width=4)
-    elif "cloud" in c or "part" in c:
-        d.ellipse([cx-r*0.5,cy-r*0.7,cx+r*0.2,cy], fill=gold)  # peeking sun
-        d.ellipse([cx-r*0.9,cy-r*0.1,cx-r*0.1,cy+r*0.7], fill=sage)
-        d.ellipse([cx-r*0.2,cy-r*0.3,cx+r*0.7,cy+r*0.6], fill=sage)
-        d.ellipse([cx-r*0.5,cy+r*0.1,cx+r*0.9,cy+r*0.8], fill=sage)
-    elif "rain" in c or "storm" in c or "drizzle" in c:
-        d.ellipse([cx-r*0.9,cy-r*0.5,cx+r*0.9,cy+r*0.4], fill=teal)
+            x1=cx+math.cos(math.radians(a))*r*0.78; y1=cy+math.sin(math.radians(a))*r*0.78
+            x2=cx+math.cos(math.radians(a))*r*1.05; y2=cy+math.sin(math.radians(a))*r*1.05
+            d.line([x1,y1,x2,y2],fill=gold,width=4)
+    elif "part" in c or ("cloud" in c and "very" not in c):
+        d.ellipse([cx-r*0.55,cy-r*0.75,cx+r*0.15,cy-r*0.05],fill=gold)
+        d.ellipse([cx-r*0.85,cy-r*0.05,cx-r*0.05,cy+r*0.7],fill=cream)
+        d.ellipse([cx-r*0.25,cy-r*0.2,cx+r*0.7,cy+r*0.65],fill=cream)
+        d.ellipse([cx-r*0.55,cy+r*0.05,cx+r*0.85,cy+r*0.8],fill=cream)
+        d.ellipse([cx-r*0.85,cy-r*0.05,cx-r*0.05,cy+r*0.7],outline=sage,width=2)
+    elif "rain" in c or "drizzle" in c or "storm" in c:
+        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=sage)
         for dx in (-r*0.4,0,r*0.4):
-            d.line([cx+dx,cy+r*0.5,cx+dx-4,cy+r*0.95], fill=col("teal"), width=4)
+            d.line([cx+dx,cy+r*0.45,cx+dx-4,cy+r*0.9],fill=teal,width=4)
     elif "snow" in c:
-        d.ellipse([cx-r*0.9,cy-r*0.5,cx+r*0.9,cy+r*0.4], fill=sage)
-        for dx in (-r*0.4,0,r*0.4):
-            d.ellipse([cx+dx-3,cy+r*0.6,cx+dx+3,cy+r*0.9], fill=teal)
-    else:  # default cloud
-        d.ellipse([cx-r*0.9,cy-r*0.2,cx+r*0.9,cy+r*0.7], fill=sage)
+        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=cream)
+        for dx in (-r*0.4,0,r*0.4): d.ellipse([cx+dx-3,cy+r*0.55,cx+dx+3,cy+r*0.85],fill=teal)
+    else:
+        d.ellipse([cx-r*0.85,cy-r*0.3,cx+r*0.85,cy+r*0.6],fill=cream)
+        d.ellipse([cx-r*0.85,cy-r*0.3,cx+r*0.85,cy+r*0.6],outline=sage,width=2)
 
-def compose(data, eink=False):
+def compose(data,eink=False):
     bg=Image.open(os.path.join(HERE,"assets/background.png")).convert("RGB")
     d=ImageDraw.Draw(bg)
     w=data["weather"]
 
-    # weather block
-    draw_text(d, LAYOUT["weather"]["temp"], f'{w["temp"]}\u00b0')
-    draw_text(d, LAYOUT["weather"]["condition"], w["condition"])
-    draw_text(d, LAYOUT["weather"]["feels_like"], f'Feels Like {w["feels_like"]}\u00b0')
-    draw_text(d, LAYOUT["weather"]["humidity"], w["humidity"])
-    draw_text(d, LAYOUT["weather"]["wind"], w["wind"])
-    draw_text(d, LAYOUT["weather"]["uv"], w["uv"])
+    # date header
+    txt(d,L["date"]["weekday"],data["date"]["weekday"])
+    txt(d,L["date"]["full"],data["date"]["full"])
 
-    # hourly
-    H=LAYOUT["hourly"]; cream=col("cream")
-    for i, hr in enumerate(w["hourly"][:7]):
+    # forecast high / low
+    txt(d,L["forecast"]["high"],f'{w["high"]}\u00b0')
+    txt(d,L["forecast"]["low"], f'{w["low"]}\u00b0')
+
+    # hourly temps + live icons
+    H=L["hourly"]
+    for i,hr in enumerate(w["hourly"][:7]):
         cx=H["cols_center_x"][i]
-        # time
-        d.text((cx,H["time_y"]), hr["label"], font=font("body",H["time_size"]),
-               fill=col(H["time_color"]), anchor="ma")
-        # cover baked icon with a cream disc, then draw live icon
-        r=H["icon_r"]
-        d.ellipse([cx-r-4,H["icon_cy"]-r-4,cx+r+4,H["icon_cy"]+r+4], fill=cream)
-        draw_icon(d, cx, H["icon_cy"], r, hr["cond"])
-        # temp
-        d.text((cx,H["temp_y"]), f'{hr["temp"]}\u00b0', font=font("semi",H["temp_size"]),
-               fill=col(H["temp_color"]), anchor="ma")
+        cover=bg_sample(bg,cx,H["icon_cy"]) if H.get("cover_icons") else None
+        draw_icon(d,cx,H["icon_cy"],H["icon_r"],hr["cond"],cover)
+        d.text((cx,H["temp_y"]),f'{hr["temp"]}\u00b0',font=font("heavy",H["temp_size"]),
+               fill=col(H["temp_color"]),anchor="mm")
 
-    # park hours
-    P=LAYOUT["parks"]
-    for i, t in enumerate(data["parks"][:4]):
-        d.text((P["time_x"],P["rows_y"][i]), t, font=font(P["font"],P["size"]),
-               fill=col(P["color"]), anchor=P["anchor"])
+    # park times under each card
+    P=L["parks"]
+    for i,t in enumerate(data["parks"][:4]):
+        d.text((P["cards_center_x"][i],P["time_y"]),t,font=font(P["font"],P["size"]),
+               fill=col(P["colors"][i]),anchor=P["anchor"])
 
     # history
-    hi=data["history"]; Hh=LAYOUT["history"]
-    draw_text(d, Hh["date"], hi["date"])
-    # headline wrap
-    hs=Hh["headline"]; hf=font(hs["font"],hs["size"])
-    hx,hy=hs["xy"]
-    hlines=wrap(d, hi["headline"], hf, hs["max_w"])
-    for ln in hlines[:2]:
-        d.text((hx,hy), ln, font=hf, fill=col(hs["color"])); hy+=hs["leading"]
-    # blurb starts below the (possibly 2-line) headline
-    bs=Hh["blurb"]; f=font(bs["font"],bs["size"])
-    lines=wrap(d, hi["blurb"], f, bs["max_w"])
-    x=bs["xy"][0]; y=max(bs["xy"][1], hy+6)
-    for ln in lines[:4]:
-        d.text((x,y), ln, font=f, fill=col(bs["color"])); y+=bs["leading"]
+    hi=data["history"]; Hh=L["history"]
+    txt(d,Hh["date"],f'{hi["date"]}  \u2013  {hi["headline"]}' if hi.get("headline") else hi["date"])
+    bs=Hh["body"]; f=font(bs["font"],bs["size"])
+    x,y=bs["xy"]
+    for ln in wrap(d,hi["blurb"],f,bs["max_w"])[:4]:
+        d.text((x,y),ln,font=f,fill=col(bs["color"])); y+=bs["leading"]
 
-    # scale to frame resolution
-    out=bg.resize((LAYOUT["canvas"]["out_w"],LAYOUT["canvas"]["out_h"]), Image.LANCZOS)
+    out=bg.resize((L["canvas"]["out_w"],L["canvas"]["out_h"]),Image.LANCZOS)
     OUT_DIR = os.path.join(HERE, "..", "output")
     os.makedirs(OUT_DIR, exist_ok=True)
-    out_path = os.path.join(OUT_DIR, "dashboard.png")
-    out.save(out_path)
-
+    p=os.path.join(OUT_DIR, "dashboard.png"); out.save(p)
     if eink:
-        palette=[(255,255,255),(20,20,20),(210,31,38),(242,183,5),(30,125,79),(27,79,160)]
+        pal=[(255,255,255),(20,20,20),(210,31,38),(242,183,5),(30,125,79),(27,79,160)]
         pim=Image.new("P",(1,1)); flat=[]
-        for c in palette: flat+=list(c)
+        for c in pal: flat+=list(c)
         flat+=[0]*(768-len(flat)); pim.putpalette(flat)
-        q=out.quantize(palette=pim, dither=Image.FLOYDSTEINBERG).convert("RGB")
-        q.save(os.path.join(OUT_DIR,"dashboard_eink.png"))
-    return out_path
+        out.quantize(palette=pim,dither=Image.FLOYDSTEINBERG).convert("RGB").save(os.path.join(OUT_DIR,"dashboard_eink.png"))
+    return p
 
 if __name__=="__main__":
-    eink="--eink" in sys.argv
     data=gather()
-    if data["weather"].get("_sample"):
-        print("[note] weather sample data:", data["weather"]["_sample"])
-    p=compose(data, eink=eink)
-    print("wrote", p)
+    if data["weather"].get("_sample"): print("[note] SAMPLE weather:",data["weather"]["_sample"])
+    print("wrote",compose(data,eink="--eink" in sys.argv))

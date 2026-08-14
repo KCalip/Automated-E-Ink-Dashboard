@@ -1,45 +1,127 @@
 {
-  "canvas": {"src_w": 1086, "src_h": 1448, "out_w": 1200, "out_h": 1600},
+  "canvas": {
+    "src_w": 1086,
+    "src_h": 1448,
+    "out_w": 1200,
+    "out_h": 1600
+  },
   "palette": {
-    "cream": "#F8F1E2", "teal": "#2F5B61", "muted_teal": "#56868C",
-    "olive": "#9D8E5C", "gold": "#E1962A", "orange": "#CF6D2E",
-    "dark_sage": "#5D6A60", "ink": "#2F5B61"
+    "cream": "#F5ECD8",
+    "ink": "#0B2A30",
+    "teal": "#16414A",
+    "orange": "#A53100",
+    "burnt": "#B34A13",
+    "olive": "#6E7A3A",
+    "muted_teal": "#4A6D6A",
+    "body": "#1a1a1a"
   },
   "fonts": {
     "heavy": "Poppins-Bold",
     "semi": "Poppins-SemiBold",
     "body": "Poppins-Regular"
   },
-  "weather": {
-    "temp":       {"xy": [470, 105], "size": 96, "font": "heavy", "color": "teal", "anchor": "la"},
-    "condition":  {"xy": [472, 232], "size": 34, "font": "semi", "color": "muted_teal", "anchor": "la"},
-    "feels_like": {"xy": [472, 280], "size": 24, "font": "body", "color": "dark_sage", "anchor": "la"},
-    "humidity":   {"xy": [955, 160], "size": 26, "font": "semi", "color": "teal", "anchor": "ra"},
-    "wind":       {"xy": [955, 214], "size": 26, "font": "semi", "color": "teal", "anchor": "ra"},
-    "uv":         {"xy": [955, 268], "size": 26, "font": "semi", "color": "teal", "anchor": "ra"}
+  "date": {
+    "weekday": {
+      "xy": [
+        543,
+        68
+      ],
+      "size": 28,
+      "font": "semi",
+      "color": "teal",
+      "anchor": "mm"
+    },
+    "full": {
+      "xy": [
+        543,
+        148
+      ],
+      "size": 64,
+      "font": "heavy",
+      "color": "ink",
+      "anchor": "mm"
+    }
+  },
+  "forecast": {
+    "high": {
+      "xy": [
+        430,
+        388
+      ],
+      "size": 76,
+      "font": "heavy",
+      "color": "orange",
+      "anchor": "mm"
+    },
+    "low": {
+      "xy": [
+        648,
+        388
+      ],
+      "size": 76,
+      "font": "heavy",
+      "color": "teal",
+      "anchor": "mm"
+    }
   },
   "hourly": {
-    "cols_center_x": [352, 456, 560, 664, 768, 870, 976],
-    "time_y": 405,
-    "icon_cy": 478,
-    "icon_r": 34,
-    "temp_y": 545,
-    "time_size": 20,
-    "temp_size": 26,
-    "time_color": "dark_sage",
-    "temp_color": "teal"
+    "cols_center_x": [
+      118,
+      262,
+      407,
+      543,
+      688,
+      832,
+      968
+    ],
+    "icon_cy": 590,
+    "icon_r": 22,
+    "temp_y": 650,
+    "temp_size": 40,
+    "temp_color": "ink",
+    "cover_icons": false
   },
   "parks": {
-    "time_x": 1035,
-    "rows_y": [768, 858, 958, 1058],
-    "size": 30,
+    "cards_center_x": [
+      140,
+      405,
+      670,
+      935
+    ],
+    "time_y": 1075,
+    "size": 21,
     "font": "semi",
-    "color": "teal",
-    "anchor": "ra"
+    "colors": [
+      "ink",
+      "ink",
+      "ink",
+      "ink"
+    ],
+    "anchor": "mm"
   },
   "history": {
-    "date":     {"xy": [362, 1178], "size": 22, "font": "semi", "color": "orange", "anchor": "la"},
-    "headline": {"xy": [362, 1210], "size": 32, "font": "heavy", "color": "teal", "anchor": "la", "max_w": 300, "leading": 36},
-    "blurb":    {"xy": [362, 1295], "size": 20, "font": "body", "color": "dark_sage", "anchor": "la", "max_w": 300, "leading": 27}
+    "date": {
+      "xy": [
+        205,
+        1250
+      ],
+      "size": 30,
+      "font": "semi",
+      "color": "teal",
+      "anchor": "la",
+      "italic": false
+    },
+    "body": {
+      "xy": [
+        205,
+        1292
+      ],
+      "size": 23,
+      "font": "body",
+      "color": "ink",
+      "anchor": "la",
+      "max_w": 360,
+      "leading": 32
+    }
   }
 }

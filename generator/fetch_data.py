@@ -1,114 +1,123 @@
 """
-fetch_data.py - pulls the live values for the RBC dashboard.
+fetch_data.py - live values for the RBC dashboard.
 
-Sources:
-  - Weather + hourly: OpenWeather One Call 3.0  (needs OPENWEATHER_API_KEY)
-  - Park hours:        ThemeParks.wiki (no key required)
-  - Disney history:    local disney_history.json
+Sources (ALL FREE, NO API KEY, NO SIGNUP):
+  - Weather:    Open-Meteo (current + daily high/low + hourly)   open-meteo.com
+  - Park hours: ThemeParks.wiki                                  api.themeparks.wiki
+  - History:    local disney_history.json
 
-If OPENWEATHER_API_KEY is unset, weather falls back to SAMPLE data so you can
-test the image pipeline offline. Park hours will still try the live (keyless) API;
-if the network is unavailable it falls back to sample too.
+Nothing here needs a key. If the network is unavailable (e.g. a locked-down
+sandbox), each fetcher falls back to clearly-marked SAMPLE data so the image
+pipeline still renders for layout testing.
 """
-import os, json, datetime, urllib.request, urllib.error
+import os, json, datetime, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-# Kissimmee, FL (RBC / Runaway Beach Club area)
+# RBC / Runaway Beach Club, Kissimmee FL (Disney area)
 LAT, LON = 28.3086, -81.4326
+TZ = "America/New_York"
 
-# ThemeParks.wiki entity IDs for the four WDW parks (stable UUIDs).
 WDW_PARKS = [
     ("Magic Kingdom",     "75ea578a-adc8-4116-a54d-dccb60765ef9"),
     ("EPCOT",             "47f90d2c-e191-4239-a466-5892ef59a88b"),
     ("Hollywood Studios", "288747d1-8b4f-4a64-867e-ea7c9b27bad8"),
     ("Animal Kingdom",    "1c84a229-8862-4648-9c71-378ddd2c7693"),
 ]
-
-UA = {"User-Agent": "RBC-Dashboard/1.0 (personal STR guest display)"}
+UA = {"User-Agent": "RBC-Dashboard/2.0 (personal guest display)"}
 
 def _get_json(url, timeout=15):
     req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read().decode())
 
-# ---------- WEATHER ----------
+# ---------- WEATHER (Open-Meteo) ----------
 def fetch_weather():
-    key = os.environ.get("OPENWEATHER_API_KEY")
-    if not key:
-        return _sample_weather("no OPENWEATHER_API_KEY set")
     try:
-        url = (f"https://api.openweathermap.org/data/3.0/onecall"
-               f"?lat={LAT}&lon={LON}&units=imperial&exclude=minutely,daily,alerts&appid={key}")
+        url = (
+            "https://api.open-meteo.com/v1/forecast"
+            f"?latitude={LAT}&longitude={LON}"
+            "&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,apparent_temperature"
+            "&hourly=temperature_2m,weather_code"
+            "&daily=temperature_2m_max,temperature_2m_min,uv_index_max"
+            f"&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone={TZ.replace('/','%2F')}"
+            "&forecast_days=1"
+        )
         d = _get_json(url)
-        cur = d["current"]
-        # hourly: pick 9a,11a,1p,3p,5p,7p,9p local
-        tz_off = d.get("timezone_offset", -14400)
-        want_hours = [9, 11, 13, 15, 17, 19, 21]
-        picks = []
-        for h in d["hourly"]:
-            lt = datetime.datetime.utcfromtimestamp(h["dt"] + tz_off)
-            if lt.hour in want_hours and lt.date() == datetime.datetime.utcfromtimestamp(cur["dt"]+tz_off).date():
-                picks.append((lt.hour, round(h["temp"]), h["weather"][0]["main"]))
-        # dedupe by hour, keep order of want_hours
-        by_hour = {p[0]: p for p in picks}
-        hourly = []
-        for wh in want_hours:
-            if wh in by_hour:
-                _, t, cond = by_hour[wh]
-                hourly.append({"label": _fmt_hour(wh), "temp": t, "cond": cond})
+        cur = d["current"]; daily = d["daily"]; hourly = d["hourly"]
+
+        # pick 9,11,13,15,17,19,21 local from hourly arrays
+        want = [9, 11, 13, 15, 17, 19, 21]
+        times = hourly["time"]           # e.g. "2026-08-14T09:00"
+        temps = hourly["temperature_2m"]
+        codes = hourly["weather_code"]
+        by_hour = {}
+        for t, tp, cd in zip(times, temps, codes):
+            hh = int(t[11:13])
+            by_hour[hh] = (round(tp), _wmo(cd))
+        hrly = []
+        for h in want:
+            if h in by_hour:
+                tp, cond = by_hour[h]
+                hrly.append({"label": _fmt_hour(h), "temp": tp, "cond": cond})
+
         return {
-            "temp": round(cur["temp"]),
-            "condition": cur["weather"][0]["description"].title(),
-            "feels_like": round(cur["feels_like"]),
-            "humidity": f'{cur["humidity"]}%',
-            "wind": f'{round(cur["wind_speed"])} mph',
-            "uv": _uv_label(cur.get("uvi", 0)),
-            "hourly": hourly,
+            "high": round(daily["temperature_2m_max"][0]),
+            "low":  round(daily["temperature_2m_min"][0]),
+            "current": round(cur["temperature_2m"]),
+            "feels_like": round(cur["apparent_temperature"]),
+            "condition": _wmo(cur["weather_code"]),
+            "humidity": f'{round(cur["relative_humidity_2m"])}%',
+            "wind": f'{round(cur["wind_speed_10m"])} mph',
+            "uv": _uv_label(daily["uv_index_max"][0]),
+            "hourly": hrly,
         }
     except Exception as e:
         return _sample_weather(f"weather fetch failed: {e}")
 
+# WMO weather code -> short label / icon family
+def _wmo(code):
+    c = int(code)
+    if c == 0: return "Clear"
+    if c in (1, 2): return "Partly Cloudy"
+    if c == 3: return "Cloudy"
+    if c in (45, 48): return "Fog"
+    if c in (51, 53, 55, 56, 57): return "Drizzle"
+    if c in (61, 63, 65, 66, 67, 80, 81, 82): return "Rain"
+    if c in (71, 73, 75, 77, 85, 86): return "Snow"
+    if c in (95, 96, 99): return "Storm"
+    return "Cloudy"
+
 def _fmt_hour(h):
-    ap = "a" if h < 12 else "p"
-    hh = h if h <= 12 else h-12
+    ap = "a" if h < 12 else "p"; hh = h if h <= 12 else h-12
     if hh == 0: hh = 12
-    return f"{hh}{ap}"
+    return f"{hh}{ap.upper()}M" if False else f"{hh} {ap.upper()}M"
 
 def _uv_label(uvi):
-    uvi = round(uvi)
-    if uvi <= 2: risk = "Low"
-    elif uvi <= 5: risk = "Mod"
-    elif uvi <= 7: risk = "High"
-    elif uvi <= 10: risk = "V.High"
-    else: risk = "Extreme"
-    return f"{uvi} {risk}"
+    uvi = round(uvi or 0)
+    r = "Low" if uvi<=2 else "Mod" if uvi<=5 else "High" if uvi<=7 else "V.High" if uvi<=10 else "Extreme"
+    return f"{uvi} {r}"
 
 def _sample_weather(reason):
-    return {
-        "_sample": reason,
-        "temp": 88, "condition": "Partly Sunny", "feels_like": 92,
-        "humidity": "62%", "wind": "E 10 mph", "uv": "7 High",
-        "hourly": [
-            {"label":"9a","temp":82,"cond":"Clear"},
-            {"label":"11a","temp":87,"cond":"Clouds"},
-            {"label":"1p","temp":90,"cond":"Clouds"},
-            {"label":"3p","temp":89,"cond":"Rain"},
-            {"label":"5p","temp":85,"cond":"Rain"},
-            {"label":"7p","temp":81,"cond":"Clouds"},
-            {"label":"9p","temp":78,"cond":"Clear"},
-        ],
-    }
+    return {"_sample": reason, "high": 88, "low": 68, "current": 84,
+            "feels_like": 88, "condition": "Partly Cloudy", "humidity": "62%",
+            "wind": "10 mph", "uv": "7 High",
+            "hourly": [
+                {"label":"9 AM","temp":72,"cond":"Partly Cloudy"},
+                {"label":"11 AM","temp":78,"cond":"Clear"},
+                {"label":"1 PM","temp":84,"cond":"Partly Cloudy"},
+                {"label":"3 PM","temp":88,"cond":"Partly Cloudy"},
+                {"label":"5 PM","temp":87,"cond":"Clear"},
+                {"label":"7 PM","temp":82,"cond":"Partly Cloudy"},
+                {"label":"9 PM","temp":76,"cond":"Clear"},
+            ]}
 
 # ---------- PARK HOURS ----------
 def _fmt_time(iso):
-    # iso like 2026-08-06T09:00:00-04:00
     t = datetime.datetime.fromisoformat(iso)
-    h = t.hour; ap = "a" if h < 12 else "p"
-    hh = h if h <= 12 else h-12
+    h = t.hour; ap = "AM" if h < 12 else "PM"; hh = h if h <= 12 else h-12
     if hh == 0: hh = 12
-    m = t.minute
-    return f"{hh}:{m:02d}{ap}" if m else f"{hh}{ap}"
+    return f"{hh}:{t.minute:02d} {ap}"
 
 def fetch_park_hours():
     today = datetime.date.today().isoformat()
@@ -116,41 +125,43 @@ def fetch_park_hours():
     for name, pid in WDW_PARKS:
         try:
             d = _get_json(f"https://api.themeparks.wiki/v1/entity/{pid}/schedule")
-            op = [s for s in d.get("schedule", [])
-                  if s.get("date") == today and s.get("type") == "OPERATING"]
+            op = [s for s in d.get("schedule", []) if s.get("date")==today and s.get("type")=="OPERATING"]
             if op:
                 s = op[0]
                 out.append(f"{_fmt_time(s['openingTime'])} \u2013 {_fmt_time(s['closingTime'])}")
             else:
-                out.append("--")
+                out.append("Closed")
         except Exception:
             out.append(_sample_hours(name))
     return out
 
 def _sample_hours(name):
-    return {"Magic Kingdom":"9a \u2013 10p","EPCOT":"9a \u2013 9p",
-            "Hollywood Studios":"9a \u2013 9p","Animal Kingdom":"8a \u2013 7p"}.get(name,"--")
+    return {"Magic Kingdom":"9:00 AM \u2013 11:00 PM","EPCOT":"9:00 AM \u2013 9:00 PM",
+            "Hollywood Studios":"9:00 AM \u2013 9:00 PM","Animal Kingdom":"8:00 AM \u2013 7:00 PM"}.get(name,"--")
 
-# ---------- DISNEY HISTORY ----------
+# ---------- HISTORY ----------
 def fetch_history():
-    with open(os.path.join(HERE, "disney_history.json")) as f:
+    with open(os.path.join(HERE,"disney_history.json")) as f:
         data = json.load(f)
-    key = datetime.date.today().strftime("%m-%d")
+    today = datetime.date.today()
+    key = today.strftime("%m-%d")
     if key in data:
         e = data[key]
-        d = datetime.date.today()
-        return {"date": d.strftime("%B %-d, ") + e["year"],
+        return {"date": today.strftime("%B ") + str(today.day) + f", {e['year']}",
                 "headline": e["headline"], "blurb": e["blurb"]}
-    # fallback: rotate through available real entries by day-of-year
-    entries = [(k,v) for k,v in data.items() if not k.startswith("_")]
-    entries.sort()
-    v = entries[datetime.date.today().timetuple().tm_yday % len(entries)][1]
-    return {"date": f"On This Day \u00b7 {v['year']}", "headline": v["headline"], "blurb": v["blurb"]}
+    entries = sorted((k,v) for k,v in data.items() if not k.startswith("_"))
+    v = entries[today.timetuple().tm_yday % len(entries)][1]
+    return {"date": f"{v['year']}", "headline": v["headline"], "blurb": v["blurb"]}
 
 def gather():
-    return {"weather": fetch_weather(),
-            "parks": fetch_park_hours(),
-            "history": fetch_history()}
+    today = datetime.date.today()
+    return {
+        "date": {"weekday": today.strftime("%A").upper(),
+                 "full": today.strftime("%B ").upper() + str(today.day) + today.strftime(", %Y")},
+        "weather": fetch_weather(),
+        "parks": fetch_park_hours(),
+        "history": fetch_history(),
+    }
 
 if __name__ == "__main__":
     print(json.dumps(gather(), indent=2))
