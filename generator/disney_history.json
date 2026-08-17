@@ -1,11 +1,443 @@
 {
-  "_comment": "Today in Disney History. Key = MM-DD. Add as many as you like; the script picks today's key, else falls back to a rotating evergreen entry. Keep blurb <= ~180 chars so it fits the card without crowding the castle art.",
-  "01-08": {"year": "1955", "headline": "Disneyland TV Special Airs", "blurb": "Walt introduced America to the still-under-construction Disneyland on ABC, six months before opening day."},
-  "05-27": {"year": "1992", "headline": "Disneyland Paris Opens", "blurb": "Disneyland Park officially opened its gates in Marne-la-Vallee, France, bringing the magic of Disney to Europe."},
-  "07-17": {"year": "1955", "headline": "Disneyland Opens", "blurb": "Walt Disney opened Disneyland in Anaheim, California, welcoming press and celebrities on a chaotic but historic first day."},
-  "08-05": {"year": "1963", "headline": "Enchanted Tiki Room Debuts", "blurb": "Walt Disney's Enchanted Tiki Room opened at Disneyland, the first attraction to use Audio-Animatronics."},
-  "08-06": {"year": "1969", "headline": "Haunted Mansion Foolish Mortals", "blurb": "Disneyland's Haunted Mansion had welcomed its first eager ghosts just days earlier, an instant Anaheim classic."},
-  "10-01": {"year": "1971", "headline": "Walt Disney World Opens", "blurb": "The Magic Kingdom opened in Florida, the first piece of Walt Disney World Resort near Orlando."},
-  "10-16": {"year": "1923", "headline": "The Disney Company Is Founded", "blurb": "Walt and Roy Disney founded the Disney Brothers Cartoon Studio, the humble start of the entire company."},
-  "12-05": {"year": "1901", "headline": "Walt Disney Is Born", "blurb": "Walter Elias Disney was born in Chicago, Illinois, the visionary who would reshape animation and theme parks."}
+  "_comment": "Today in Disney History. Key = MM-DD. Priority: (1) Walt Disney World milestones, (2) other Disney park milestones, (3) major Walt Disney personal facts. Only well-documented dates are included. Missing days fall back to a dateless evergreen line (see fetch_data.py) so the frame NEVER shows another day's fact as if it were today. Keep blurb <= ~180 chars to fit the card.",
+  "01-01": {
+    "year": "1966",
+    "headline": "Walt Disney served as grand marshal with Mickey…",
+    "blurb": "Walt Disney served as grand marshal with Mickey Mouse at his side. The parade's theme was “It's a Small World,” and featured a float promoting the new attraction coming to…"
+  },
+  "01-02": {
+    "year": "1996",
+    "headline": "World of Motion Closes",
+    "blurb": "World of Motion closes at Epcot."
+  },
+  "01-04": {
+    "year": "1994",
+    "headline": "The Disney Inn Closes",
+    "blurb": "The Disney Inn closes at the Walt Disney World Resort (to become Shades of Green)."
+  },
+  "01-05": {
+    "year": "1998",
+    "headline": "Take Flight Closes",
+    "blurb": "Take Flight closes at Magic Kingdom."
+  },
+  "01-06": {
+    "year": "2008",
+    "headline": "Today is the last day of existence for Disney-MGM…",
+    "blurb": "Today is the last day of existence for Disney-MGM Studios in Florida. As of tomorrow, the Disney World park will be called Disney's Hollywood Studios."
+  },
+  "01-07": {
+    "year": "1992",
+    "headline": "Voyage of the Little Mermaid Opens",
+    "blurb": "Voyage of the Little Mermaid opens at Disney's Hollywood Studios."
+  },
+  "01-09": {
+    "year": "1999",
+    "headline": "Horizons is Opens",
+    "blurb": "Horizons is open to Guests for the final day at Epcot."
+  },
+  "01-10": {
+    "year": "1982",
+    "headline": "Walt Disney World Resort switches completely to…",
+    "blurb": "Walt Disney World Resort switches completely to passport-style admission tickets."
+  },
+  "01-15": {
+    "year": "1975",
+    "headline": "Space Mountain and Carousel of Progress Opens",
+    "blurb": "Space Mountain and Carousel of Progress open at Magic Kingdom."
+  },
+  "01-16": {
+    "year": "1970",
+    "headline": "The Walt Disney World Preview Center Opens",
+    "blurb": "The Walt Disney World Preview Center opens to the public."
+  },
+  "01-21": {
+    "year": "1995",
+    "headline": "\"Circle of Life: An Environmental Fable\" Debuts",
+    "blurb": "\"Circle of Life: An Environmental Fable\" debuts at The Land at Epcot."
+  },
+  "01-23": {
+    "year": "1999",
+    "headline": "Cirque du Soleil Opens",
+    "blurb": "Cirque du Soleil opens in Downtown Disney."
+  },
+  "01-30": {
+    "year": "1998",
+    "headline": "\"Illuminations\" Debuts",
+    "blurb": "\"Illuminations\" debuts at Epcot."
+  },
+  "02-01": {
+    "year": "1995",
+    "headline": "Tomorrowland Power & Light Co. (arcade) Opens",
+    "blurb": "Tomorrowland Power & Light Co. (arcade) opens at Magic Kingdom."
+  },
+  "02-02": {
+    "year": "1967",
+    "headline": "Roy O. Disney holds a press conference outlining…",
+    "blurb": "Roy O. Disney holds a press conference outlining specific plans for construction of the Walt Disney World Resort."
+  },
+  "02-03": {
+    "year": "1945",
+    "headline": "Walt Disney Pictures releases \"The Three…",
+    "blurb": "Walt Disney Pictures releases \"The Three Caballeros\" in the United States."
+  },
+  "02-05": {
+    "year": "1996",
+    "headline": "Ye Olde Christmas Shop Opens",
+    "blurb": "Ye Olde Christmas Shop opens in Liberty Square at Magic Kingdom Park."
+  },
+  "02-07": {
+    "year": "1940",
+    "headline": "\"Pinocchio\" Premieres",
+    "blurb": "\"Pinocchio\" premieres in New York City."
+  },
+  "02-08": {
+    "year": "2006",
+    "headline": "Disney reacquires Oswald the Lucky Rabbit from…",
+    "blurb": "Disney reacquires Oswald the Lucky Rabbit from NBC Universal."
+  },
+  "02-09": {
+    "year": "1996",
+    "headline": "The Disney Institute learning campus Opens",
+    "blurb": "The Disney Institute learning campus opens at Walt Disney World."
+  },
+  "02-13": {
+    "year": "1993",
+    "headline": "Lumiere's Kitchen Opens",
+    "blurb": "Lumiere's Kitchen opens at Magic Kingdom."
+  },
+  "02-14": {
+    "year": "2009",
+    "headline": "The American Idol Experience Opens",
+    "blurb": "The American Idol Experience opens at Disney's Hollywood Studios."
+  },
+  "02-15": {
+    "year": "1899",
+    "headline": "Lillian Bounds (Walt Disney's wife) is born",
+    "blurb": "Lillian Bounds (Walt Disney's wife) is born."
+  },
+  "02-17": {
+    "year": "2004",
+    "headline": "Disney announces the purchase of The Muppets from…",
+    "blurb": "Disney announces the purchase of The Muppets from The Jim Henson Company."
+  },
+  "02-18": {
+    "year": "1960",
+    "headline": "The Winter Olympics opening ceremony, produced by…",
+    "blurb": "The Winter Olympics opening ceremony, produced by Walt Disney, is held in Squaw Valley, Calif."
+  },
+  "02-20": {
+    "year": "1986",
+    "headline": "WED Enterprises is renamed Walt Disney…",
+    "blurb": "WED Enterprises is renamed Walt Disney Imagineering."
+  },
+  "02-22": {
+    "year": "2012",
+    "headline": "- The interactive fantasy game Sorcerers…",
+    "blurb": "- The interactive fantasy game Sorcerers of the Magic Kingdom debuts at Magic Kingdom."
+  },
+  "02-26": {
+    "year": "1942",
+    "headline": "Walt received the Irving G. Thailberg Memorial…",
+    "blurb": "Walt received the Irving G. Thailberg Memorial Award. It is an \"honorary Oscar\" given to \"creative producers, whose bodies of work reflect a consistently high quality of motion…"
+  },
+  "02-28": {
+    "year": "2004",
+    "headline": "—The Earl of Sandwich Opens",
+    "blurb": "—The Earl of Sandwich opens in Downtown Disney."
+  },
+  "02-29": {
+    "year": "2012",
+    "headline": "Disneyland and Magic Kingdom stay Opens",
+    "blurb": "Disneyland and Magic Kingdom stay open for 24 consecutive hours on \"One More Disney Day\"."
+  },
+  "03-01": {
+    "year": "1999",
+    "headline": "Kali River Rapids and Maharajah Jungle…",
+    "blurb": "Kali River Rapids and Maharajah Jungle Trek officially open at Disney's Animal Kingdom."
+  },
+  "03-02": {
+    "year": "1976",
+    "headline": "—The Fort Wilderness Kennel Opens",
+    "blurb": "—The Fort Wilderness Kennel opens at Disney's Fort Wilderness Resort & Campground."
+  },
+  "03-05": {
+    "year": "1983",
+    "headline": "Journey into Imagination Opens",
+    "blurb": "Journey into Imagination opens at Epcot."
+  },
+  "03-13": {
+    "year": "2005",
+    "headline": "Crush 'n' Gusher Opens",
+    "blurb": "Crush 'n' Gusher opens at Disney's Typhoon Lagoon."
+  },
+  "03-14": {
+    "year": "1998",
+    "headline": "The stand-alone McDonald's restaurant…",
+    "blurb": "The stand-alone McDonald's restaurant near Blizzard Beach opens at Walt Disney World."
+  },
+  "03-16": {
+    "year": "2002",
+    "headline": "The Walt Disney Studios (theme park) Opens",
+    "blurb": "The Walt Disney Studios (theme park) opens at Disneyland Paris."
+  },
+  "03-17": {
+    "year": "1999",
+    "headline": "The grand opening of Test Track is held at Epcot",
+    "blurb": "The grand opening of Test Track is held at Epcot."
+  },
+  "03-18": {
+    "year": "1967",
+    "headline": "Pirates of the Caribbean and the Blue…",
+    "blurb": "Pirates of the Caribbean and the Blue Bayou restaurant open at Disneyland."
+  },
+  "03-19": {
+    "year": "1959",
+    "headline": "Walt Disney Pictures releases \"The Shaggy Dog\"",
+    "blurb": "Walt Disney Pictures releases \"The Shaggy Dog\"."
+  },
+  "03-20": {
+    "year": "1995",
+    "headline": "Main Street Book Shop, Penny Arcade, and…",
+    "blurb": "Main Street Book Shop, Penny Arcade, and House of Magic close at Magic Kingdom."
+  },
+  "03-22": {
+    "year": "1975",
+    "headline": "Lake Buena Vista Shopping Village (now…",
+    "blurb": "Lake Buena Vista Shopping Village (now called Downtown Disney Marketplace) opens."
+  },
+  "03-25": {
+    "year": "1990",
+    "headline": "Disneyana Shop Opens",
+    "blurb": "Disneyana Shop opens at Magic Kingdom."
+  },
+  "03-26": {
+    "year": "1994",
+    "headline": "\"Food Rocks\" Opens",
+    "blurb": "\"Food Rocks\" opens at The Land at Epcot."
+  },
+  "03-27": {
+    "year": "1986",
+    "headline": "Bob Hope helps officiate the groundbreaking of…",
+    "blurb": "Bob Hope helps officiate the groundbreaking of Disney-MGM Studios."
+  },
+  "03-28": {
+    "year": "1987",
+    "headline": "Port of Entry Opens",
+    "blurb": "Port of Entry opens at Epcot."
+  },
+  "03-30": {
+    "year": "1997",
+    "headline": "The Disney's Wide World of Sports box…",
+    "blurb": "The Disney's Wide World of Sports box office officially opens."
+  },
+  "03-31": {
+    "year": "2012",
+    "headline": "—Storybook Circus Opens",
+    "blurb": "—Storybook Circus opens as the first phase of New Fantasyland at Magic Kingdom."
+  },
+  "04-01": {
+    "year": "1995",
+    "headline": "—Blizzard Beach Opens",
+    "blurb": "—Blizzard Beach opens at the Walt Disney World Resort."
+  },
+  "04-02": {
+    "year": "2007",
+    "headline": "Monsters, Inc. Laugh Floor Opens",
+    "blurb": "Monsters, Inc. Laugh Floor opens at Magic Kingdom."
+  },
+  "04-03": {
+    "year": "1994",
+    "headline": "Frank G. Wells, president of The Walt Disney…",
+    "blurb": "Frank G. Wells, president of The Walt Disney Company, dies in a helicopter accident."
+  },
+  "04-04": {
+    "year": "1994",
+    "headline": "Michael Eisner assumes the presidency of The Walt…",
+    "blurb": "Michael Eisner assumes the presidency of The Walt Disney Company following Frank Wells' death."
+  },
+  "04-05": {
+    "year": "2006",
+    "headline": "Bibbidi Bobbidi Boutique Opens",
+    "blurb": "Bibbidi Bobbidi Boutique opens in Downtown Disney at Walt Disney World."
+  },
+  "04-06": {
+    "year": "2007",
+    "headline": "Gran Fiesta Tour Starring the Three…",
+    "blurb": "Gran Fiesta Tour Starring the Three Caballeros! opens in the Mexico pavilion at Epcot."
+  },
+  "04-07": {
+    "year": "2001",
+    "headline": "\"Who Wants to Be a Millionaire - Play It!\" Opens",
+    "blurb": "\"Who Wants to Be a Millionaire - Play It!\" opens at Disney's Hollywood Studios."
+  },
+  "04-08": {
+    "year": "1974",
+    "headline": "Treasure Island in Bay Lake (later…",
+    "blurb": "Treasure Island in Bay Lake (later Discovery Island) opens at the Walt Disney World Resort."
+  },
+  "04-09": {
+    "year": "1961",
+    "headline": "Walt Disney dedicates the grotto and wishing well…",
+    "blurb": "Walt Disney dedicates the grotto and wishing well adjacent to Sleeping Beauty Castle, with donations benefitting children's charities worldwide."
+  },
+  "04-12": {
+    "year": "1995",
+    "headline": "'Ohana Opens",
+    "blurb": "'Ohana opens at Disney's Polynesian Village Resort."
+  },
+  "04-13": {
+    "year": "1935",
+    "headline": "\"Mickey's Kangaroo,\" the last…",
+    "blurb": "\"Mickey's Kangaroo,\" the last black-and-white Walt Disney Studios cartoon short, debuts."
+  },
+  "04-14": {
+    "year": "1934",
+    "headline": "\"The Big Bad Wolf\" (Silly Symphony) Debuts",
+    "blurb": "\"The Big Bad Wolf\" (Silly Symphony) debuts."
+  },
+  "04-15": {
+    "year": "1973",
+    "headline": "The Walt Disney Story Opens",
+    "blurb": "The Walt Disney Story opens at Magic Kingdom."
+  },
+  "04-16": {
+    "year": "2001",
+    "headline": "Disney's Animal Kingdom Lodge Opens",
+    "blurb": "Disney's Animal Kingdom Lodge opens at the Walt Disney World Resort."
+  },
+  "06-05": {
+    "year": "1972",
+    "headline": "If You Had Wings Opens",
+    "blurb": "If You Had Wings opens at Magic Kingdom."
+  },
+  "06-06": {
+    "year": "1987",
+    "headline": "If You Could Fly Opens",
+    "blurb": "If You Could Fly opens at Magic Kingdom."
+  },
+  "06-07": {
+    "year": "1975",
+    "headline": "Mission to Mars Opens",
+    "blurb": "Mission to Mars opens at Magic Kingdom."
+  },
+  "06-10": {
+    "year": "1998",
+    "headline": "BET Soundstage Club Opens",
+    "blurb": "BET Soundstage Club opens at Pleasure Island."
+  },
+  "06-11": {
+    "year": "1994",
+    "headline": "Tomorrowland Transit Authority (formerly…",
+    "blurb": "Tomorrowland Transit Authority (formerly the WEDway People Mover) opens at Magic Kingdom."
+  },
+  "07-03": {
+    "year": "1985",
+    "headline": "Tinker Bell makes her first flight at the Walt…",
+    "blurb": "Tinker Bell makes her first flight at the Walt Disney World Resort."
+  },
+  "07-04": {
+    "year": "1996",
+    "headline": "— The Disney-designed town of…",
+    "blurb": "— The Disney-designed town of Celebration, Fla. officially opens."
+  },
+  "07-05": {
+    "year": "1991",
+    "headline": "— The Rocketeer begins making flights during the…",
+    "blurb": "— The Rocketeer begins making flights during the “Sorcery in the Sky” show at Disney's Hollywood Studios."
+  },
+  "07-06": {
+    "year": "1994",
+    "headline": "Groundbreaking held for the Disney Institute at…",
+    "blurb": "Groundbreaking held for the Disney Institute at the Walt Disney World Resort."
+  },
+  "12-19": {
+    "year": "1998",
+    "headline": "Test Track has a soft-opening at Epcot",
+    "blurb": "Test Track has a soft-opening at Epcot."
+  },
+  "12-21": {
+    "year": "1937",
+    "headline": "Snow White and the Seven Dwarfs Premieres",
+    "blurb": "Snow White and the Seven Dwarfs premieres at the Carthay Circle Theater."
+  },
+  "12-22": {
+    "year": "1995",
+    "headline": "Chef Mickey's Opens",
+    "blurb": "Chef Mickey's opens at Disney's Contemporary Resort."
+  },
+  "12-24": {
+    "year": "1971",
+    "headline": "Flight to the Moon Opens",
+    "blurb": "Flight to the Moon opens at Magic Kingdom."
+  },
+  "12-25": {
+    "year": "1983",
+    "headline": "Very Merry Christmas Parade is broadcast live…",
+    "blurb": "Very Merry Christmas Parade is broadcast live from the Magic Kingdom for the very first time."
+  },
+  "12-31": {
+    "year": "1936",
+    "headline": "Walt and Lillian Disney adopt a daughter, naming…",
+    "blurb": "Walt and Lillian Disney adopt a daughter, naming her Sharon Mae Disney."
+  },
+  "01-31": {
+    "year": "2004",
+    "headline": "Twilight Zone Tower of Terror – Disneyland",
+    "blurb": "The Hollywood Tower Hotel opened at Disney California Adventure, bringing the famous 13-story drop out West."
+  },
+  "04-22": {
+    "year": "1998",
+    "headline": "Disney's Animal Kingdom Opens",
+    "blurb": "The fourth Walt Disney World theme park opened, anchored by the 145-foot Tree of Life and dedicated to the animal kingdom."
+  },
+  "05-01": {
+    "year": "1989",
+    "headline": "Disney-MGM Studios Opens",
+    "blurb": "The park now known as Disney's Hollywood Studios opened at Walt Disney World, themed to the golden age of Hollywood."
+  },
+  "06-01": {
+    "year": "1989",
+    "headline": "Typhoon Lagoon Opens",
+    "blurb": "Walt Disney World's tropical-storm-themed water park opened, featuring one of the largest wave pools in North America."
+  },
+  "07-13": {
+    "year": "1925",
+    "headline": "Walt & Lillian Marry",
+    "blurb": "Walt Disney married Lillian Bounds in Lewiston, Idaho. Thirty years later they'd celebrate their anniversary inside a not-yet-open Disneyland."
+  },
+  "07-17": {
+    "year": "1955",
+    "headline": "Disneyland Opens",
+    "blurb": "Walt Disney opened Disneyland in Anaheim, California – the original park that made Walt Disney World possible."
+  },
+  "08-05": {
+    "year": "1963",
+    "headline": "Enchanted Tiki Room Debuts",
+    "blurb": "Walt Disney's Enchanted Tiki Room opened at Disneyland, the first attraction ever to use Audio-Animatronics."
+  },
+  "10-01": {
+    "year": "1971",
+    "headline": "Walt Disney World Opens!",
+    "blurb": "The Magic Kingdom opened near Orlando to about 10,000 guests – the first piece of Walt Disney World Resort."
+  },
+  "10-16": {
+    "year": "1923",
+    "headline": "The Disney Company Is Founded",
+    "blurb": "Walt and Roy Disney founded the Disney Brothers Cartoon Studio in Hollywood – the humble start of the whole company."
+  },
+  "11-18": {
+    "year": "1928",
+    "headline": "Mickey Mouse Debuts",
+    "blurb": "Steamboat Willie premiered in New York, introducing Mickey Mouse in the first cartoon with synchronized sound."
+  },
+  "12-05": {
+    "year": "1901",
+    "headline": "Walt Disney Is Born",
+    "blurb": "Walter Elias Disney was born in Chicago, Illinois – the visionary who would reshape animation and theme parks forever."
+  },
+  "12-15": {
+    "year": "1966",
+    "headline": "Remembering Walt Disney",
+    "blurb": "Walt Disney passed away in Burbank, California. His brother Roy carried on the Florida project and named it Walt Disney World in his honor."
+  }
 }
