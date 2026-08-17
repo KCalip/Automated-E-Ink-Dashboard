@@ -1,0 +1,11 @@
+{
+  "_README": "Which background template to show on which date. To use: add a line under 'dates' with the date (YYYY-MM-DD) and the template name. Template name must match a file in assets/templates/ WITHOUT the .png (e.g. 'universal' -> assets/templates/universal.png). Any date NOT listed here uses 'default' below. That's it - edit only the 'dates' block.",
+
+  "default": "disney",
+
+  "dates": {
+    "2026-08-20": "universal",
+    "2026-08-22": "resort",
+    "2026-08-27": "universal"
+  }
+}

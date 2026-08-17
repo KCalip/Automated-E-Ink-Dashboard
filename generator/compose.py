@@ -6,8 +6,8 @@ from fetch_data import gather
 HERE = os.path.dirname(os.path.abspath(__file__))
 L = json.load(open(os.path.join(HERE,"layout.json")))
 PAL = L["palette"]
-FA = {"heavy":"Poppins-Bold","semi":"Poppins-SemiBold","body":"Poppins-Regular"}
-FF = {"Poppins-Bold":"fonts/Poppins-Bold.ttf","Poppins-SemiBold":"fonts/Poppins-SemiBold.ttf","Poppins-Regular":"fonts/Poppins-Regular.ttf"}
+FA = {"heavy":"Poppins-Bold","semi":"Poppins-SemiBold","body":"Poppins-Regular","script":"Pacifico-Regular"}
+FF = {"Poppins-Bold":"fonts/Poppins-Bold.ttf","Poppins-SemiBold":"fonts/Poppins-SemiBold.ttf","Poppins-Regular":"fonts/Poppins-Regular.ttf","Pacifico-Regular":"fonts/Pacifico-Regular.ttf"}
 
 def hexrgb(h): h=h.lstrip("#"); return tuple(int(h[i:i+2],16) for i in (0,2,4))
 def col(n): return hexrgb(PAL[n])
@@ -33,34 +33,44 @@ def bg_sample(img,x,y): return img.getpixel((max(0,min(x,img.width-1)),max(0,min
 
 def draw_icon(d,cx,cy,r,cond,cover):
     c=cond.lower()
-    gold=hexrgb("#E8A21E"); cream=hexrgb("#FBF3E0"); sage=hexrgb("#C9CDB8"); teal=hexrgb("#3E6B6B")
+    gold=hexrgb("#E8A21E"); cloud=hexrgb("#C7CBB8"); ink=hexrgb("#12333B"); teal=hexrgb("#3E6B6B")
+    ow=3  # outline width
     if cover:
         d.ellipse([cx-r-6,cy-r-6,cx+r+6,cy+r+6], fill=cover)
     if "clear" in c:
-        d.ellipse([cx-r*0.6,cy-r*0.6,cx+r*0.6,cy+r*0.6],fill=gold)
+        d.ellipse([cx-r*0.6,cy-r*0.6,cx+r*0.6,cy+r*0.6],fill=gold,outline=ink,width=ow)
         for a in range(0,360,45):
             x1=cx+math.cos(math.radians(a))*r*0.78; y1=cy+math.sin(math.radians(a))*r*0.78
             x2=cx+math.cos(math.radians(a))*r*1.05; y2=cy+math.sin(math.radians(a))*r*1.05
             d.line([x1,y1,x2,y2],fill=gold,width=4)
     elif "part" in c or ("cloud" in c and "very" not in c):
-        d.ellipse([cx-r*0.55,cy-r*0.75,cx+r*0.15,cy-r*0.05],fill=gold)
-        d.ellipse([cx-r*0.85,cy-r*0.05,cx-r*0.05,cy+r*0.7],fill=cream)
-        d.ellipse([cx-r*0.25,cy-r*0.2,cx+r*0.7,cy+r*0.65],fill=cream)
-        d.ellipse([cx-r*0.55,cy+r*0.05,cx+r*0.85,cy+r*0.8],fill=cream)
-        d.ellipse([cx-r*0.85,cy-r*0.05,cx-r*0.05,cy+r*0.7],outline=sage,width=2)
+        # sun peeking, THEN cloud with dark outline + gray fill so it reads on e-ink
+        d.ellipse([cx-r*0.5,cy-r*0.8,cx+r*0.2,cy-r*0.1],fill=gold,outline=ink,width=ow)
+        # cloud as merged puffs with a single outline: draw fill then stroke the silhouette
+        puffs=[(cx-r*0.85,cy-r*0.05,cx-r*0.05,cy+r*0.72),
+               (cx-r*0.3,cy-r*0.25,cx+r*0.7,cy+r*0.62),
+               (cx-r*0.6,cy+r*0.05,cx+r*0.9,cy+r*0.78)]
+        for p in puffs: d.ellipse(p,fill=cloud)
+        for p in puffs: d.ellipse(p,outline=ink,width=ow)
+        # cover interior seams by refilling centers (keeps outline only on outer edge visually)
+        d.ellipse([cx-r*0.55,cy+r*0.15,cx+r*0.6,cy+r*0.6],fill=cloud)
     elif "rain" in c or "drizzle" in c or "storm" in c:
-        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=sage)
+        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=cloud,outline=ink,width=ow)
         for dx in (-r*0.4,0,r*0.4):
-            d.line([cx+dx,cy+r*0.45,cx+dx-4,cy+r*0.9],fill=teal,width=4)
+            d.line([cx+dx,cy+r*0.45,cx+dx-4,cy+r*0.95],fill=teal,width=5)
     elif "snow" in c:
-        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=cream)
+        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=cloud,outline=ink,width=ow)
         for dx in (-r*0.4,0,r*0.4): d.ellipse([cx+dx-3,cy+r*0.55,cx+dx+3,cy+r*0.85],fill=teal)
     else:
-        d.ellipse([cx-r*0.85,cy-r*0.3,cx+r*0.85,cy+r*0.6],fill=cream)
-        d.ellipse([cx-r*0.85,cy-r*0.3,cx+r*0.85,cy+r*0.6],outline=sage,width=2)
+        d.ellipse([cx-r*0.85,cy-r*0.3,cx+r*0.85,cy+r*0.6],fill=cloud,outline=ink,width=ow)
 
 def compose(data,eink=False):
-    bg=Image.open(os.path.join(HERE,"assets/background.png")).convert("RGB")
+    # pick the scheduled template; fall back to the plain background if missing
+    tpl = data.get("template", "disney")
+    tpl_path = os.path.join(HERE, "assets", "templates", f"{tpl}.png")
+    if not os.path.exists(tpl_path):
+        tpl_path = os.path.join(HERE, "assets", "background.png")  # safety net
+    bg=Image.open(tpl_path).convert("RGB")
     d=ImageDraw.Draw(bg)
     w=data["weather"]
 
@@ -87,12 +97,21 @@ def compose(data,eink=False):
         d.text((P["cards_center_x"][i],P["time_y"]),t,font=font(P["font"],P["size"]),
                fill=col(P["colors"][i]),anchor=P["anchor"])
 
-    # history
+    # history / trivia block with dynamic header
     hi=data["history"]; Hh=L["history"]
-    txt(d,Hh["date"],f'{hi["date"]}  \u2013  {hi["headline"]}' if hi.get("headline") else hi["date"])
+    header = "This Day in Disney History" if hi.get("kind")=="history" else "Did You Know?"
+    txt(d, Hh["header"], header)
+    # Sub-line: for dated entries show the DATE (headline would just echo the blurb);
+    # for evergreen show the topic headline.
+    if hi.get("kind")=="history":
+        line = hi["date"]
+    else:
+        line = hi.get("headline","")
+    txt(d, Hh["date"], line)
+    # blurb / event text
     bs=Hh["body"]; f=font(bs["font"],bs["size"])
     x,y=bs["xy"]
-    for ln in wrap(d,hi["blurb"],f,bs["max_w"])[:4]:
+    for ln in wrap(d,hi["blurb"],f,bs["max_w"])[:3]:
         d.text((x,y),ln,font=f,fill=col(bs["color"])); y+=bs["leading"]
 
     out=bg.resize((L["canvas"]["out_w"],L["canvas"]["out_h"]),Image.LANCZOS)

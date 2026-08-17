@@ -140,6 +140,18 @@ def _sample_hours(name):
             "Hollywood Studios":"9:00 AM \u2013 9:00 PM","Animal Kingdom":"8:00 AM \u2013 7:00 PM"}.get(name,"--")
 
 # ---------- HISTORY ----------
+# Evergreen, DATELESS lines for days with no specific entry.
+# These make NO "on this day" claim, so they're never wrong. Rotates daily.
+_EVERGREEN = [
+    {"date": "Did You Know?", "headline": "Four Parks, One Resort", "blurb": "Walt Disney World is home to Magic Kingdom, EPCOT, Hollywood Studios, and Animal Kingdom \u2013 plus two water parks."},
+    {"date": "Disney Fact", "headline": "Bigger Than a City", "blurb": "Walt Disney World spans about 25,000 acres near Orlando \u2013 roughly the size of San Francisco."},
+    {"date": "Did You Know?", "headline": "The Original Park", "blurb": "Disneyland opened in California in 1955 and inspired the far larger Walt Disney World in Florida."},
+    {"date": "Disney Fact", "headline": "Cinderella Castle", "blurb": "Magic Kingdom's Cinderella Castle stands 189 feet tall and has anchored the park since opening day in 1971."},
+    {"date": "Did You Know?", "headline": "A Mouse Named Mickey", "blurb": "Walt's wife Lillian suggested the name 'Mickey' after Walt first called his mouse character 'Mortimer.'"},
+    {"date": "Disney Fact", "headline": "Spaceship Earth", "blurb": "EPCOT's iconic geodesic sphere weighs over 15,000 tons and has been the park's symbol since 1982."},
+    {"date": "Did You Know?", "headline": "Audio-Animatronics", "blurb": "Disney pioneered lifelike robotic figures, debuting the technology in Disneyland's Enchanted Tiki Room in 1963."},
+]
+
 def fetch_history():
     with open(os.path.join(HERE,"disney_history.json")) as f:
         data = json.load(f)
@@ -147,11 +159,12 @@ def fetch_history():
     key = today.strftime("%m-%d")
     if key in data:
         e = data[key]
-        return {"date": today.strftime("%B ") + str(today.day) + f", {e['year']}",
+        return {"kind": "history",
+                "date": today.strftime("%B ") + str(today.day) + f", {e['year']}",
                 "headline": e["headline"], "blurb": e["blurb"]}
-    entries = sorted((k,v) for k,v in data.items() if not k.startswith("_"))
-    v = entries[today.timetuple().tm_yday % len(entries)][1]
-    return {"date": f"{v['year']}", "headline": v["headline"], "blurb": v["blurb"]}
+    # No entry for today -> dateless evergreen line (never claims a wrong date)
+    ev = _EVERGREEN[today.timetuple().tm_yday % len(_EVERGREEN)]
+    return {"kind": "evergreen", **ev}
 
 def gather():
     today = datetime.date.today()
@@ -161,7 +174,25 @@ def gather():
         "weather": fetch_weather(),
         "parks": fetch_park_hours(),
         "history": fetch_history(),
+        "template": resolve_template(),
     }
+
+def resolve_template(for_date=None):
+    """Return the template NAME for a given date (default: today).
+
+    Reads schedule.json. Any date not listed falls back to 'default'.
+    NOTE: This is the ONLY function that knows *where* the schedule lives.
+    To switch to a Google Sheet later, replace just this function's body
+    with a fetch of the sheet -- nothing else in the pipeline changes.
+    """
+    d = (for_date or datetime.date.today()).isoformat()
+    try:
+        with open(os.path.join(HERE, "schedule.json")) as f:
+            sched = json.load(f)
+    except Exception:
+        return "disney"  # safe fallback if schedule missing/broken
+    default = sched.get("default", "disney")
+    return sched.get("dates", {}).get(d, default)
 
 if __name__ == "__main__":
     print(json.dumps(gather(), indent=2))

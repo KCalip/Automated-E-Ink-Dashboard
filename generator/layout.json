@@ -6,14 +6,15 @@
     "out_h": 1600
   },
   "palette": {
-    "cream": "#F5ECD8",
-    "ink": "#0B2A30",
+    "cream": "#F5ECD5",
+    "ink": "#12333B",
     "teal": "#16414A",
     "orange": "#A53100",
     "burnt": "#B34A13",
     "olive": "#6E7A3A",
     "muted_teal": "#4A6D6A",
-    "body": "#1a1a1a"
+    "body": "#12333B",
+    "black": "#101010"
   },
   "fonts": {
     "heavy": "Poppins-Bold",
@@ -23,22 +24,22 @@
   "date": {
     "weekday": {
       "xy": [
-        543,
-        68
+        362,
+        55
       ],
-      "size": 28,
+      "size": 32,
       "font": "semi",
       "color": "teal",
       "anchor": "mm"
     },
     "full": {
       "xy": [
-        543,
-        148
+        362,
+        158
       ],
-      "size": 64,
+      "size": 60,
       "font": "heavy",
-      "color": "ink",
+      "color": "teal",
       "anchor": "mm"
     }
   },
@@ -46,9 +47,9 @@
     "high": {
       "xy": [
         430,
-        388
+        352
       ],
-      "size": 76,
+      "size": 74,
       "font": "heavy",
       "color": "orange",
       "anchor": "mm"
@@ -56,9 +57,9 @@
     "low": {
       "xy": [
         648,
-        388
+        352
       ],
-      "size": 76,
+      "size": 74,
       "font": "heavy",
       "color": "teal",
       "anchor": "mm"
@@ -74,54 +75,62 @@
       832,
       968
     ],
-    "icon_cy": 590,
-    "icon_r": 22,
-    "temp_y": 650,
-    "temp_size": 40,
-    "temp_color": "ink",
-    "cover_icons": false
+    "icon_cy": 505,
+    "icon_r": 24,
+    "temp_y": 568,
+    "temp_size": 38,
+    "temp_color": "black"
   },
   "parks": {
     "cards_center_x": [
-      140,
-      405,
-      670,
-      935
+      155,
+      411,
+      672,
+      932
     ],
-    "time_y": 1075,
-    "size": 21,
+    "time_y": 986,
+    "size": 22,
     "font": "semi",
     "colors": [
-      "ink",
-      "ink",
-      "ink",
-      "ink"
+      "black",
+      "black",
+      "black",
+      "black"
     ],
     "anchor": "mm"
   },
   "history": {
+    "header": {
+      "xy": [
+        543,
+        1150
+      ],
+      "size": 60,
+      "font": "script",
+      "color": "teal",
+      "anchor": "mm"
+    },
     "date": {
       "xy": [
-        205,
-        1250
+        300,
+        1210
       ],
-      "size": 30,
-      "font": "semi",
-      "color": "teal",
-      "anchor": "la",
-      "italic": false
+      "size": 34,
+      "font": "heavy",
+      "color": "ink",
+      "anchor": "la"
     },
     "body": {
       "xy": [
-        205,
-        1292
+        300,
+        1255
       ],
-      "size": 23,
+      "size": 26,
       "font": "body",
-      "color": "ink",
+      "color": "black",
       "anchor": "la",
-      "max_w": 360,
-      "leading": 32
+      "max_w": 660,
+      "leading": 36
     }
   }
 }
