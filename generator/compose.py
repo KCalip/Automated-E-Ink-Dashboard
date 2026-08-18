@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 from fetch_data import gather
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-L = json.load(open(os.path.join(HERE,"layout.json")))
+L = json.load(open(os.path.join(HERE,"layout.json"), encoding="utf-8"))
 PAL = L["palette"]
 FA = {"heavy":"Poppins-Bold","semi":"Poppins-SemiBold","body":"Poppins-Regular","script":"Pacifico-Regular"}
 FF = {"Poppins-Bold":"fonts/Poppins-Bold.ttf","Poppins-SemiBold":"fonts/Poppins-SemiBold.ttf","Poppins-Regular":"fonts/Poppins-Regular.ttf","Pacifico-Regular":"fonts/Pacifico-Regular.ttf"}
