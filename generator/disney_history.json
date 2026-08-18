@@ -40,6 +40,11 @@
     "headline": "Walt Disney World Resort switches completely to…",
     "blurb": "Walt Disney World Resort switches completely to passport-style admission tickets."
   },
+  "01-12": {
+    "year": "2001",
+    "headline": "Downtown Disney (DL)",
+    "blurb": "Downtown Disney opens at the Disneyland Resort."
+  },
   "01-15": {
     "year": "1975",
     "headline": "Space Mountain and Carousel of Progress Opens",
@@ -49,6 +54,11 @@
     "year": "1970",
     "headline": "The Walt Disney World Preview Center Opens",
     "blurb": "The Walt Disney World Preview Center opens to the public."
+  },
+  "01-18": {
+    "year": "1991",
+    "headline": "Eastern Airlines",
+    "blurb": "Eastern Airlines, an official Walt Disney World airline sponsor, suspended service."
   },
   "01-21": {
     "year": "1995",
@@ -60,10 +70,25 @@
     "headline": "Cirque du Soleil Opens",
     "blurb": "Cirque du Soleil opens in Downtown Disney."
   },
+  "01-24": {
+    "year": "2007",
+    "headline": "Seas with Nemo",
+    "blurb": "The Seas with Nemo & Friends opened at EPCOT; Finding Nemo – The Musical opened the same day at Disney’s Animal Kingdom."
+  },
+  "01-25": {
+    "year": "1961",
+    "headline": "101 Dalmatians",
+    "blurb": "“One Hundred and One Dalmatians” premiered in theaters."
+  },
   "01-30": {
     "year": "1998",
     "headline": "\"Illuminations\" Debuts",
     "blurb": "\"Illuminations\" debuts at Epcot."
+  },
+  "01-31": {
+    "year": "2004",
+    "headline": "Twilight Zone Tower of Terror – Disneyland",
+    "blurb": "The Hollywood Tower Hotel opened at Disney California Adventure, bringing the famous 13-story drop out West."
   },
   "02-01": {
     "year": "1995",
@@ -135,6 +160,11 @@
     "headline": "- The interactive fantasy game Sorcerers…",
     "blurb": "- The interactive fantasy game Sorcerers of the Magic Kingdom debuts at Magic Kingdom."
   },
+  "02-23": {
+    "year": "1939",
+    "headline": "Snow White Oscar",
+    "blurb": "Walt Disney received an honorary Academy Award for Snow White and the Seven Dwarfs."
+  },
   "02-26": {
     "year": "1942",
     "headline": "Walt received the Irving G. Thailberg Memorial…",
@@ -142,8 +172,8 @@
   },
   "02-28": {
     "year": "2004",
-    "headline": "—The Earl of Sandwich Opens",
-    "blurb": "—The Earl of Sandwich opens in Downtown Disney."
+    "headline": "Earl of Sandwich / EPCOT Flower & Garden",
+    "blurb": "The Earl of Sandwich opened in Downtown Disney (2004). The 25th EPCOT International Flower & Garden Festival kicked off (2018)."
   },
   "02-29": {
     "year": "2012",
@@ -160,10 +190,25 @@
     "headline": "—The Fort Wilderness Kennel Opens",
     "blurb": "—The Fort Wilderness Kennel opens at Disney's Fort Wilderness Resort & Campground."
   },
+  "03-03": {
+    "year": "1995",
+    "headline": "Indiana Jones Adventure",
+    "blurb": "Indiana Jones Adventure held its opening ceremony at Disneyland."
+  },
   "03-05": {
     "year": "1983",
     "headline": "Journey into Imagination Opens",
     "blurb": "Journey into Imagination opens at Epcot."
+  },
+  "03-07": {
+    "year": "1942",
+    "headline": "Michael Eisner born",
+    "blurb": "Former Disney CEO Michael Eisner was born."
+  },
+  "03-09": {
+    "year": "1984",
+    "headline": "Splash released",
+    "blurb": "“Splash” was released in theaters."
   },
   "03-13": {
     "year": "2005",
@@ -174,6 +219,11 @@
     "year": "1998",
     "headline": "The stand-alone McDonald's restaurant…",
     "blurb": "The stand-alone McDonald's restaurant near Blizzard Beach opens at Walt Disney World."
+  },
+  "03-15": {
+    "year": "1975",
+    "headline": "America the Beautiful",
+    "blurb": "America the Beautiful premiered at the Magic Kingdom."
   },
   "03-16": {
     "year": "2002",
@@ -204,6 +254,11 @@
     "year": "1975",
     "headline": "Lake Buena Vista Shopping Village (now…",
     "blurb": "Lake Buena Vista Shopping Village (now called Downtown Disney Marketplace) opens."
+  },
+  "03-23": {
+    "year": "2007",
+    "headline": "Meet the Robinsons",
+    "blurb": "Meet the Robinsons character meet-and-greets began at Disney-MGM Studios."
   },
   "03-25": {
     "year": "1990",
@@ -305,6 +360,66 @@
     "headline": "Disney's Animal Kingdom Lodge Opens",
     "blurb": "Disney's Animal Kingdom Lodge opens at the Walt Disney World Resort."
   },
+  "04-20": {
+    "year": "1991",
+    "headline": "Sci-Fi Dine-In",
+    "blurb": "The Sci-Fi Dine-In Theater Restaurant opened at Disney-MGM Studios."
+  },
+  "04-22": {
+    "year": "1998",
+    "headline": "Disney's Animal Kingdom Opens",
+    "blurb": "The fourth Walt Disney World theme park opened, anchored by the 145-foot Tree of Life and dedicated to the animal kingdom."
+  },
+  "05-01": {
+    "year": "1989",
+    "headline": "Disney-MGM Studios Opens",
+    "blurb": "The park now known as Disney's Hollywood Studios opened at Walt Disney World, themed to the golden age of Hollywood."
+  },
+  "05-02": {
+    "year": "2003",
+    "headline": "Lizzie McGuire Movie",
+    "blurb": "The Lizzie McGuire Movie opened in theaters."
+  },
+  "05-11": {
+    "year": "1993",
+    "headline": "Full House at WDW",
+    "blurb": "Full House goes to Walt Disney World for a special episode."
+  },
+  "05-12": {
+    "year": "2017",
+    "headline": "Happily Ever After",
+    "blurb": "Magic Kingdom debuts its “Happily Ever After” fireworks show."
+  },
+  "05-16": {
+    "year": "1991",
+    "headline": "MuppetVision 3D",
+    "blurb": "Muppet*Vision 3D opened at Disney-MGM Studios."
+  },
+  "05-17": {
+    "year": "1991",
+    "headline": "Port Orleans",
+    "blurb": "Disney’s Port Orleans Resort opened at Walt Disney World."
+  },
+  "05-23": {
+    "year": "2001",
+    "headline": "Magic Carpets",
+    "blurb": "The Magic Carpets of Aladdin opened in Adventureland at Magic Kingdom."
+  },
+  "05-28": {
+    "year": "1966",
+    "headline": "it’s a small world",
+    "blurb": "“it’s a small world” opened at Disneyland."
+  },
+  "05-31": {
+    "year": "2012",
+    "headline": "Snow White’s Scary Adventures",
+    "blurb": "Snow White’s Scary Adventures closes at Walt Disney World."
+  },
+  "06-01": {
+    "year": "1989",
+    "headline": "Typhoon Lagoon Opens",
+    "blurb": "Walt Disney World's tropical-storm-themed water park opened, featuring one of the largest wave pools in North America."
+  },
   "06-05": {
     "year": "1972",
     "headline": "If You Had Wings Opens",
@@ -330,6 +445,51 @@
     "headline": "Tomorrowland Transit Authority (formerly…",
     "blurb": "Tomorrowland Transit Authority (formerly the WEDway People Mover) opens at Magic Kingdom."
   },
+  "06-14": {
+    "year": "1959",
+    "headline": "E-Ticket debuts",
+    "blurb": "Disneyland introduces the E-Ticket attraction coupon."
+  },
+  "06-15": {
+    "year": "1967",
+    "headline": "Club 33",
+    "blurb": "Club 33 opened at Disneyland."
+  },
+  "06-17": {
+    "year": "2016",
+    "headline": "Soarin’ Around the World",
+    "blurb": "Soarin’ Around the World debuts at EPCOT."
+  },
+  "06-20": {
+    "year": "1976",
+    "headline": "River Country",
+    "blurb": "River Country, Walt Disney World’s first water park, opened."
+  },
+  "06-21": {
+    "year": "2016",
+    "headline": "Frozen Ever After",
+    "blurb": "Frozen Ever After opened in the Norway pavilion at EPCOT."
+  },
+  "06-26": {
+    "year": "1957",
+    "headline": "Viewliner",
+    "blurb": "The Disneyland Viewliner opened."
+  },
+  "06-27": {
+    "year": "1985",
+    "headline": "Disney-MGM rights",
+    "blurb": "Disney acquired the rights to create the Disney-MGM Studios park."
+  },
+  "06-28": {
+    "year": "1988",
+    "headline": "Grand Floridian",
+    "blurb": "Disney’s Grand Floridian Resort opened at Walt Disney World."
+  },
+  "07-01": {
+    "year": "1975",
+    "headline": "WEDway PeopleMover",
+    "blurb": "The WEDway PeopleMover opened at the Magic Kingdom."
+  },
   "07-03": {
     "year": "1985",
     "headline": "Tinker Bell makes her first flight at the Walt…",
@@ -349,6 +509,286 @@
     "year": "1994",
     "headline": "Groundbreaking held for the Disney Institute at…",
     "blurb": "Groundbreaking held for the Disney Institute at the Walt Disney World Resort."
+  },
+  "07-09": {
+    "year": "1999",
+    "headline": "Discovery Island closes",
+    "blurb": "Discovery Island ceased operations at Walt Disney World."
+  },
+  "07-10": {
+    "year": "1981",
+    "headline": "Fox and the Hound",
+    "blurb": "“The Fox and the Hound” made its theatrical debut."
+  },
+  "07-13": {
+    "year": "1925",
+    "headline": "Walt & Lillian Marry",
+    "blurb": "Walt Disney married Lillian Bounds in Lewiston, Idaho. Thirty years later they'd celebrate their anniversary inside a not-yet-open Disneyland."
+  },
+  "07-15": {
+    "year": "1955",
+    "headline": "Disneyland opens",
+    "blurb": "Disneyland’s opening day in Anaheim, California."
+  },
+  "07-17": {
+    "year": "1955",
+    "headline": "Disneyland Opens",
+    "blurb": "Walt Disney opened Disneyland in Anaheim, California – the original park that made Walt Disney World possible."
+  },
+  "07-22": {
+    "year": "1994",
+    "headline": "Tower of Terror",
+    "blurb": "The Twilight Zone Tower of Terror opened at Disney-MGM Studios."
+  },
+  "08-01": {
+    "year": "1997",
+    "headline": "Coronado Springs",
+    "blurb": "Disney’s Coronado Springs Resort opened at Walt Disney World."
+  },
+  "08-02": {
+    "year": "1998",
+    "headline": "Castaway Cay",
+    "blurb": "The first Disney Cruise Line guests arrived at Castaway Cay."
+  },
+  "08-03": {
+    "year": "2014",
+    "headline": "Four Seasons Orlando",
+    "blurb": "Four Seasons Resort Orlando opened at Walt Disney World."
+  },
+  "08-04": {
+    "year": "2009",
+    "headline": "Bay Lake Tower",
+    "blurb": "Bay Lake Tower opened at Disney’s Contemporary Resort."
+  },
+  "08-05": {
+    "year": "1963",
+    "headline": "Enchanted Tiki Room Debuts",
+    "blurb": "Walt Disney's Enchanted Tiki Room opened at Disneyland, the first attraction ever to use Audio-Animatronics."
+  },
+  "08-09": {
+    "year": "1969",
+    "headline": "Haunted Mansion",
+    "blurb": "The Haunted Mansion opened at Disneyland."
+  },
+  "08-13": {
+    "year": "1942",
+    "headline": "Bambi",
+    "blurb": "“Bambi” opened in U.S. theaters."
+  },
+  "08-17": {
+    "year": "1986",
+    "headline": "Luxo Jr.",
+    "blurb": "“Luxo Jr.” became Pixar’s first animated project."
+  },
+  "08-18": {
+    "year": "2026",
+    "headline": "Line-break test",
+    "blurb": "TEST LINE ONE — does the line break work?\nTEST LINE TWO — if this sits on its own line, the newline renders."
+  },
+  "08-24": {
+    "year": "1989",
+    "headline": "Ewok Village",
+    "blurb": "The Ewok Village opened at Disney-MGM Studios."
+  },
+  "08-25": {
+    "year": "1989",
+    "headline": "Indiana Jones Stunt",
+    "blurb": "The Indiana Jones Epic Stunt Spectacular! opened at Disney-MGM Studios."
+  },
+  "09-02": {
+    "year": "1979",
+    "headline": "Big Thunder (DL)",
+    "blurb": "Big Thunder Mountain Railroad opened at Disneyland."
+  },
+  "09-04": {
+    "year": "2001",
+    "headline": "Tokyo DisneySea",
+    "blurb": "Tokyo DisneySea opened."
+  },
+  "09-05": {
+    "year": "1974",
+    "headline": "Hoop-Dee-Doo",
+    "blurb": "The Hoop-Dee-Doo Musical Revue became a permanent show at Walt Disney World."
+  },
+  "09-06": {
+    "year": "1976",
+    "headline": "America on Parade",
+    "blurb": "America on Parade ended at Disneyland and the Magic Kingdom."
+  },
+  "09-10": {
+    "year": "2009",
+    "headline": "First D23 Expo",
+    "blurb": "The first D23 Expo debuted at the Anaheim Convention Center."
+  },
+  "09-12": {
+    "year": "2005",
+    "headline": "Hong Kong Disneyland",
+    "blurb": "Hong Kong Disneyland officially opened."
+  },
+  "09-15": {
+    "year": "1997",
+    "headline": "Downtown Disney West Side",
+    "blurb": "Downtown Disney West Side opened at Walt Disney World."
+  },
+  "09-24": {
+    "year": "1936",
+    "headline": "Jim Henson born",
+    "blurb": "Disney Legend and Muppets creator Jim Henson was born."
+  },
+  "09-29": {
+    "year": "2019",
+    "headline": "Disney Skyliner",
+    "blurb": "The Disney Skyliner gondola system opened at Walt Disney World."
+  },
+  "10-01": {
+    "year": "1971",
+    "headline": "Walt Disney World Opens!",
+    "blurb": "The Magic Kingdom opened near Orlando to about 10,000 guests – the first piece of Walt Disney World Resort."
+  },
+  "10-03": {
+    "year": "1971",
+    "headline": "Peter Pan’s Flight",
+    "blurb": "Peter Pan’s Flight opened at Walt Disney World."
+  },
+  "10-05": {
+    "year": "1955",
+    "headline": "Disneyland Hotel",
+    "blurb": "The Disneyland Hotel opened."
+  },
+  "10-10": {
+    "year": "1961",
+    "headline": "Jodi Benson born",
+    "blurb": "Jodi Benson, the voice of Ariel in The Little Mermaid, was born."
+  },
+  "10-14": {
+    "year": "1971",
+    "headline": "20,000 Leagues",
+    "blurb": "20,000 Leagues Under the Sea opened at the Magic Kingdom."
+  },
+  "10-16": {
+    "year": "1923",
+    "headline": "The Disney Company Is Founded",
+    "blurb": "Walt and Roy Disney founded the Disney Brothers Cartoon Studio in Hollywood – the humble start of the whole company."
+  },
+  "10-18": {
+    "year": "1967",
+    "headline": "The Jungle Book",
+    "blurb": "“The Jungle Book” debuted in theaters."
+  },
+  "10-19": {
+    "year": "1989",
+    "headline": "Wonders of Life",
+    "blurb": "EPCOT’s Wonders of Life pavilion opened."
+  },
+  "10-23": {
+    "year": "1982",
+    "headline": "Carnival de Lumiere",
+    "blurb": "Carnival de Lumiere, EPCOT’s first nighttime show, debuted."
+  },
+  "10-25": {
+    "year": "1971",
+    "headline": "WDW Dedication",
+    "blurb": "Roy O. Disney formally dedicated Walt Disney World."
+  },
+  "10-27": {
+    "year": "1979",
+    "headline": "Halloween at MK",
+    "blurb": "“Halloween Hysteria” was held at the Magic Kingdom."
+  },
+  "10-31": {
+    "year": "1995",
+    "headline": "First MNSSHP",
+    "blurb": "The first Mickey’s Not-So-Scary Halloween Party was held at the Magic Kingdom."
+  },
+  "11-01": {
+    "year": "2003",
+    "headline": "Brother Bear",
+    "blurb": "“Brother Bear” was released in theaters."
+  },
+  "11-07": {
+    "year": "2014",
+    "headline": "Big Hero 6",
+    "blurb": "“Big Hero 6” debuted in American theaters."
+  },
+  "11-14": {
+    "year": "2007",
+    "headline": "Yak & Yeti",
+    "blurb": "Yak & Yeti Restaurant opened at Disney’s Animal Kingdom."
+  },
+  "11-15": {
+    "year": "1980",
+    "headline": "Big Thunder (MK)",
+    "blurb": "Big Thunder Mountain Railroad opened at the Magic Kingdom."
+  },
+  "11-16": {
+    "year": "2004",
+    "headline": "Turtle Talk",
+    "blurb": "Turtle Talk with Crush opened at EPCOT."
+  },
+  "11-18": {
+    "year": "1928",
+    "headline": "Mickey Mouse Debuts",
+    "blurb": "Steamboat Willie premiered in New York, introducing Mickey Mouse in the first cartoon with synchronized sound."
+  },
+  "11-19": {
+    "year": "1971",
+    "headline": "Fort Wilderness",
+    "blurb": "Disney’s Fort Wilderness Resort opened at Walt Disney World."
+  },
+  "11-21": {
+    "year": "1994",
+    "headline": "Honey I Shrunk the Audience",
+    "blurb": "Honey, I Shrunk the Audience opened at EPCOT."
+  },
+  "11-22": {
+    "year": "1991",
+    "headline": "Beauty and the Beast Stage",
+    "blurb": "Beauty and the Beast Live on Stage opened at Disney-MGM Studios."
+  },
+  "11-29": {
+    "year": "1934",
+    "headline": "First Macy’s balloon",
+    "blurb": "Disney’s first balloon appeared in the Macy’s Thanksgiving Day Parade."
+  },
+  "12-01": {
+    "year": "2004",
+    "headline": "Disney PhotoPass",
+    "blurb": "Disney PhotoPass debuted at Walt Disney World."
+  },
+  "12-03": {
+    "year": "2021",
+    "headline": "Walt Disney World Day",
+    "blurb": "Orange County, Florida officially recognized “Walt Disney World Day.”"
+  },
+  "12-05": {
+    "year": "1901",
+    "headline": "Walt Disney Is Born",
+    "blurb": "Walter Elias Disney was born in Chicago, Illinois – the visionary who would reshape animation and theme parks forever."
+  },
+  "12-06": {
+    "year": "1903",
+    "headline": "Ruth Disney born",
+    "blurb": "Walt Disney’s sister, Ruth Flora Disney, was born."
+  },
+  "12-11": {
+    "year": "1992",
+    "headline": "Muppet Christmas Carol",
+    "blurb": "“The Muppet Christmas Carol” debuted in theaters."
+  },
+  "12-14": {
+    "year": "2003",
+    "headline": "Pop Century",
+    "blurb": "Disney’s Pop Century Resort opened at Walt Disney World."
+  },
+  "12-15": {
+    "year": "1966",
+    "headline": "Remembering Walt Disney",
+    "blurb": "Walt Disney passed away in Burbank, California. His brother Roy carried on the Florida project and named it Walt Disney World in his honor."
+  },
+  "12-16": {
+    "year": "1952",
+    "headline": "WED Enterprises",
+    "blurb": "Walt Disney founded WED Enterprises, the forerunner of Walt Disney Imagineering."
   },
   "12-19": {
     "year": "1998",
@@ -379,65 +819,5 @@
     "year": "1936",
     "headline": "Walt and Lillian Disney adopt a daughter, naming…",
     "blurb": "Walt and Lillian Disney adopt a daughter, naming her Sharon Mae Disney."
-  },
-  "01-31": {
-    "year": "2004",
-    "headline": "Twilight Zone Tower of Terror – Disneyland",
-    "blurb": "The Hollywood Tower Hotel opened at Disney California Adventure, bringing the famous 13-story drop out West."
-  },
-  "04-22": {
-    "year": "1998",
-    "headline": "Disney's Animal Kingdom Opens",
-    "blurb": "The fourth Walt Disney World theme park opened, anchored by the 145-foot Tree of Life and dedicated to the animal kingdom."
-  },
-  "05-01": {
-    "year": "1989",
-    "headline": "Disney-MGM Studios Opens",
-    "blurb": "The park now known as Disney's Hollywood Studios opened at Walt Disney World, themed to the golden age of Hollywood."
-  },
-  "06-01": {
-    "year": "1989",
-    "headline": "Typhoon Lagoon Opens",
-    "blurb": "Walt Disney World's tropical-storm-themed water park opened, featuring one of the largest wave pools in North America."
-  },
-  "07-13": {
-    "year": "1925",
-    "headline": "Walt & Lillian Marry",
-    "blurb": "Walt Disney married Lillian Bounds in Lewiston, Idaho. Thirty years later they'd celebrate their anniversary inside a not-yet-open Disneyland."
-  },
-  "07-17": {
-    "year": "1955",
-    "headline": "Disneyland Opens",
-    "blurb": "Walt Disney opened Disneyland in Anaheim, California – the original park that made Walt Disney World possible."
-  },
-  "08-05": {
-    "year": "1963",
-    "headline": "Enchanted Tiki Room Debuts",
-    "blurb": "Walt Disney's Enchanted Tiki Room opened at Disneyland, the first attraction ever to use Audio-Animatronics."
-  },
-  "10-01": {
-    "year": "1971",
-    "headline": "Walt Disney World Opens!",
-    "blurb": "The Magic Kingdom opened near Orlando to about 10,000 guests – the first piece of Walt Disney World Resort."
-  },
-  "10-16": {
-    "year": "1923",
-    "headline": "The Disney Company Is Founded",
-    "blurb": "Walt and Roy Disney founded the Disney Brothers Cartoon Studio in Hollywood – the humble start of the whole company."
-  },
-  "11-18": {
-    "year": "1928",
-    "headline": "Mickey Mouse Debuts",
-    "blurb": "Steamboat Willie premiered in New York, introducing Mickey Mouse in the first cartoon with synchronized sound."
-  },
-  "12-05": {
-    "year": "1901",
-    "headline": "Walt Disney Is Born",
-    "blurb": "Walter Elias Disney was born in Chicago, Illinois – the visionary who would reshape animation and theme parks forever."
-  },
-  "12-15": {
-    "year": "1966",
-    "headline": "Remembering Walt Disney",
-    "blurb": "Walt Disney passed away in Burbank, California. His brother Roy carried on the Florida project and named it Walt Disney World in his honor."
   }
 }

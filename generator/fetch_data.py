@@ -39,12 +39,19 @@ def fetch_weather():
             f"?latitude={LAT}&longitude={LON}"
             "&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,apparent_temperature"
             "&hourly=temperature_2m,weather_code"
-            "&daily=temperature_2m_max,temperature_2m_min,uv_index_max"
+            "&daily=temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset"
             f"&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone={TZ.replace('/','%2F')}"
             "&forecast_days=1"
         )
         d = _get_json(url)
         cur = d["current"]; daily = d["daily"]; hourly = d["hourly"]
+
+        # sunrise/sunset hour (local) for day/night icon logic
+        try:
+            sr = int(daily["sunrise"][0][11:13])
+            ss = int(daily["sunset"][0][11:13])
+        except Exception:
+            sr, ss = 7, 20  # sensible Florida fallback
 
         # pick 9,11,13,15,17,19,21 local from hourly arrays
         want = [9, 11, 13, 15, 17, 19, 21]
@@ -59,7 +66,8 @@ def fetch_weather():
         for h in want:
             if h in by_hour:
                 tp, cond = by_hour[h]
-                hrly.append({"label": _fmt_hour(h), "temp": tp, "cond": cond})
+                is_night = (h < sr) or (h >= ss)
+                hrly.append({"label": _fmt_hour(h), "temp": tp, "cond": cond, "night": is_night})
 
         return {
             "high": round(daily["temperature_2m_max"][0]),
@@ -103,13 +111,13 @@ def _sample_weather(reason):
             "feels_like": 88, "condition": "Partly Cloudy", "humidity": "62%",
             "wind": "10 mph", "uv": "7 High",
             "hourly": [
-                {"label":"9 AM","temp":72,"cond":"Partly Cloudy"},
-                {"label":"11 AM","temp":78,"cond":"Clear"},
-                {"label":"1 PM","temp":84,"cond":"Partly Cloudy"},
-                {"label":"3 PM","temp":88,"cond":"Partly Cloudy"},
-                {"label":"5 PM","temp":87,"cond":"Clear"},
-                {"label":"7 PM","temp":82,"cond":"Partly Cloudy"},
-                {"label":"9 PM","temp":76,"cond":"Clear"},
+                {"label":"9 AM","temp":72,"cond":"Partly Cloudy","night":False},
+                {"label":"11 AM","temp":78,"cond":"Clear","night":False},
+                {"label":"1 PM","temp":84,"cond":"Partly Cloudy","night":False},
+                {"label":"3 PM","temp":88,"cond":"Partly Cloudy","night":False},
+                {"label":"5 PM","temp":87,"cond":"Clear","night":False},
+                {"label":"7 PM","temp":82,"cond":"Clear","night":False},
+                {"label":"9 PM","temp":76,"cond":"Clear","night":True},
             ]}
 
 # ---------- PARK HOURS ----------

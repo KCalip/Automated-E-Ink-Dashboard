@@ -20,23 +20,78 @@ def txt(d,spec,s):
     d.text(tuple(spec["xy"]), str(s), font=font(spec["font"],spec["size"]),
            fill=col(spec["color"]), anchor=spec.get("anchor","la"))
 def wrap(d,s,f,w):
-    out=[]; cur=""
-    for word in s.split():
-        t=(cur+" "+word).strip()
-        if d.textlength(t,font=f)<=w: cur=t
-        else: out.append(cur); cur=word
-    if cur: out.append(cur)
+    # Honor explicit line breaks (\n or literal backslash-n from JSON), then
+    # word-wrap each segment to the width.
+    s=s.replace("\\n","\n")           # in case JSON stored a literal backslash-n
+    out=[]
+    for segment in s.split("\n"):
+        cur=""
+        for word in segment.split():
+            t=(cur+" "+word).strip()
+            if d.textlength(t,font=f)<=w: cur=t
+            else:
+                if cur: out.append(cur)
+                cur=word
+        out.append(cur)              # keep the segment's last line (even if empty)
     return out
 
 # sample the cream background so icon-cover discs blend in
 def bg_sample(img,x,y): return img.getpixel((max(0,min(x,img.width-1)),max(0,min(y,img.height-1))))
 
-def draw_icon(d,cx,cy,r,cond,cover):
+def draw_moon(d,cx,cy,r,ink,gold,bg):
+    # Clean crescent: solid dark-ink shape built as (full disc) minus (offset disc).
+    # Drawn on a mask so the crescent is a crisp filled shape, not a carve that
+    # depends on matching the background color.
+    from PIL import Image, ImageDraw
+    size=int(r*2.6); 
+    m=Image.new("L",(size,size),0); md=ImageDraw.Draw(m)
+    R=r*0.82
+    ox,oy=size/2, size/2
+    # full disc
+    md.ellipse([ox-R,oy-R,ox+R,oy+R],fill=255)
+    # subtract an offset disc to carve the crescent (offset up-right)
+    off=R*0.62
+    md.ellipse([ox-R+off,oy-R-off*0.45,ox+R+off,oy+R-off*0.45],fill=0)
+    # paste solid ink through the mask
+    swatch=Image.new("RGB",(size,size),(20,40,90))  # dark navy moon
+    d._image.paste(swatch,(int(cx-size/2),int(cy-size/2)),m)
+
+def draw_cloud(d,cx,cy,w,fill,ink,ow=3):
+    # Compact fair-weather cloud with ONE clean outer outline (no internal seams).
+    # Built by filling a silhouette mask, then deriving the outline as the
+    # difference between a dilated mask and the mask itself.
+    from PIL import Image, ImageDraw, ImageFilter
+    pad=ow+4
+    W=int(w); H=int(w*0.66)
+    S=(W+pad*2, H+pad*2)
+    m=Image.new("L",S,0); md=ImageDraw.Draw(m)
+    ox,oy=pad,pad
+    bumps=[(ox+W*0.02,oy+H*0.32,ox+W*0.44,oy+H*0.95),   # left
+           (ox+W*0.22,oy+H*0.02,ox+W*0.78,oy+H*0.82),   # center (tallest)
+           (ox+W*0.54,oy+H*0.28,ox+W*0.99,oy+H*0.95)]   # right
+    for b in bumps: md.ellipse(b,fill=255)
+    md.rectangle([ox+W*0.12,oy+H*0.58,ox+W*0.88,oy+H*0.95],fill=255)  # flat base
+    # outline = (dilated mask) - (mask), so only the OUTER edge is stroked
+    dil=m.filter(ImageFilter.MaxFilter(ow*2+1))
+    from PIL import ImageChops
+    outline=ImageChops.subtract(dil,m)
+    px,py=int(cx-S[0]/2),int(cy-S[1]/2)
+    d._image.paste(Image.new("RGB",S,fill),(px,py),m)       # fill first
+    d._image.paste(Image.new("RGB",S,ink),(px,py),outline)  # clean outer outline
+
+def draw_icon(d,cx,cy,r,cond,cover,night=False,bg=(230,232,220)):
     c=cond.lower()
-    gold=hexrgb("#E8A21E"); cloud=hexrgb("#C7CBB8"); ink=hexrgb("#12333B"); teal=hexrgb("#3E6B6B")
-    ow=3  # outline width
+    gold=hexrgb("#E8A21E"); cloud=hexrgb("#F2EFE2"); ink=hexrgb("#12333B"); teal=hexrgb("#3E6B6B")
+    ow=2  # outline width (lighter, closer to template cloud)
     if cover:
         d.ellipse([cx-r-6,cy-r-6,cx+r+6,cy+r+6], fill=cover)
+
+    # ---- NIGHT: sun is down. Always just a moon (no clouds, no sun). ----
+    if night:
+        draw_moon(d,cx,cy,r,ink,gold,bg)
+        return
+
+    # ---- DAY ----
     if "clear" in c:
         d.ellipse([cx-r*0.6,cy-r*0.6,cx+r*0.6,cy+r*0.6],fill=gold,outline=ink,width=ow)
         for a in range(0,360,45):
@@ -44,25 +99,23 @@ def draw_icon(d,cx,cy,r,cond,cover):
             x2=cx+math.cos(math.radians(a))*r*1.05; y2=cy+math.sin(math.radians(a))*r*1.05
             d.line([x1,y1,x2,y2],fill=gold,width=4)
     elif "part" in c or ("cloud" in c and "very" not in c):
-        # sun peeking, THEN cloud with dark outline + gray fill so it reads on e-ink
-        d.ellipse([cx-r*0.5,cy-r*0.8,cx+r*0.2,cy-r*0.1],fill=gold,outline=ink,width=ow)
-        # cloud as merged puffs with a single outline: draw fill then stroke the silhouette
-        puffs=[(cx-r*0.85,cy-r*0.05,cx-r*0.05,cy+r*0.72),
-               (cx-r*0.3,cy-r*0.25,cx+r*0.7,cy+r*0.62),
-               (cx-r*0.6,cy+r*0.05,cx+r*0.9,cy+r*0.78)]
-        for p in puffs: d.ellipse(p,fill=cloud)
-        for p in puffs: d.ellipse(p,outline=ink,width=ow)
-        # cover interior seams by refilling centers (keeps outline only on outer edge visually)
-        d.ellipse([cx-r*0.55,cy+r*0.15,cx+r*0.6,cy+r*0.6],fill=cloud)
+        # sun in upper-left, fair-weather cloud overlapping its lower-right (like reference)
+        d.ellipse([cx-r*0.85,cy-r*0.9,cx-r*0.0,cy-r*0.05],fill=gold,outline=ink,width=ow)
+        for a in range(0,360,45):
+            sx=cx-r*0.42; sy=cy-r*0.48
+            x1=sx+math.cos(math.radians(a))*r*0.52; y1=sy+math.sin(math.radians(a))*r*0.52
+            x2=sx+math.cos(math.radians(a))*r*0.72; y2=sy+math.sin(math.radians(a))*r*0.72
+            d.line([x1,y1,x2,y2],fill=gold,width=3)
+        draw_cloud(d,cx+r*0.22,cy+r*0.42,r*1.75,cloud,ink,ow)
     elif "rain" in c or "drizzle" in c or "storm" in c:
-        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=cloud,outline=ink,width=ow)
-        for dx in (-r*0.4,0,r*0.4):
-            d.line([cx+dx,cy+r*0.45,cx+dx-4,cy+r*0.95],fill=teal,width=5)
+        draw_cloud(d,cx,cy-r*0.2,r*1.7,cloud,ink,ow)
+        for dx in (-r*0.35,0,r*0.35):
+            d.line([cx+dx,cy+r*0.5,cx+dx-3,cy+r*0.95],fill=teal,width=5)
     elif "snow" in c:
-        d.ellipse([cx-r*0.85,cy-r*0.55,cx+r*0.85,cy+r*0.35],fill=cloud,outline=ink,width=ow)
-        for dx in (-r*0.4,0,r*0.4): d.ellipse([cx+dx-3,cy+r*0.55,cx+dx+3,cy+r*0.85],fill=teal)
+        draw_cloud(d,cx,cy-r*0.2,r*1.7,cloud,ink,ow)
+        for dx in (-r*0.35,0,r*0.35): d.ellipse([cx+dx-3,cy+r*0.55,cx+dx+3,cy+r*0.85],fill=teal)
     else:
-        d.ellipse([cx-r*0.85,cy-r*0.3,cx+r*0.85,cy+r*0.6],fill=cloud,outline=ink,width=ow)
+        draw_cloud(d,cx,cy,r*1.8,cloud,ink,ow)
 
 def compose(data,eink=False):
     # pick the scheduled template; fall back to the plain background if missing
@@ -87,7 +140,8 @@ def compose(data,eink=False):
     for i,hr in enumerate(w["hourly"][:7]):
         cx=H["cols_center_x"][i]
         cover=bg_sample(bg,cx,H["icon_cy"]) if H.get("cover_icons") else None
-        draw_icon(d,cx,H["icon_cy"],H["icon_r"],hr["cond"],cover)
+        bgcol=bg_sample(bg,cx,H["icon_cy"]-int(H["icon_r"]*0.5))
+        draw_icon(d,cx,H["icon_cy"],H["icon_r"],hr["cond"],cover,hr.get("night",False),bgcol)
         d.text((cx,H["temp_y"]),f'{hr["temp"]}\u00b0',font=font("heavy",H["temp_size"]),
                fill=col(H["temp_color"]),anchor="mm")
 
