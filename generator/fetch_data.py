@@ -14,6 +14,10 @@ import os, json, datetime, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# Show a raindrop on an hourly slot only when precip probability is at least this.
+# Tune to taste: lower = more raindrops. 30 keeps Florida's constant low chances quiet.
+RAIN_POP_THRESHOLD = 20
+
 # RBC / Runaway Beach Club, Kissimmee FL (Disney area)
 LAT, LON = 28.3086, -81.4326
 TZ = "America/New_York"
@@ -38,7 +42,7 @@ def fetch_weather():
             "https://api.open-meteo.com/v1/forecast"
             f"?latitude={LAT}&longitude={LON}"
             "&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,apparent_temperature"
-            "&hourly=temperature_2m,weather_code"
+            "&hourly=temperature_2m,weather_code,precipitation_probability"
             "&daily=temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset"
             f"&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone={TZ.replace('/','%2F')}"
             "&forecast_days=1"
@@ -58,16 +62,20 @@ def fetch_weather():
         times = hourly["time"]           # e.g. "2026-08-14T09:00"
         temps = hourly["temperature_2m"]
         codes = hourly["weather_code"]
+        pops  = hourly.get("precipitation_probability", [0]*len(times))
         by_hour = {}
-        for t, tp, cd in zip(times, temps, codes):
+        for t, tp, cd, pp in zip(times, temps, codes, pops):
             hh = int(t[11:13])
-            by_hour[hh] = (round(tp), _wmo(cd))
+            by_hour[hh] = (round(tp), _wmo(cd), pp if pp is not None else 0)
         hrly = []
         for h in want:
             if h in by_hour:
-                tp, cond = by_hour[h]
+                tp, cond, pop = by_hour[h]
                 is_night = (h < sr) or (h >= ss)
-                hrly.append({"label": _fmt_hour(h), "temp": tp, "cond": cond, "night": is_night})
+                # show a raindrop only when rain is worth noting
+                rain = pop >= RAIN_POP_THRESHOLD
+                hrly.append({"label": _fmt_hour(h), "temp": tp, "cond": cond,
+                             "night": is_night, "pop": pop, "rain": rain})
 
         return {
             "high": round(daily["temperature_2m_max"][0]),
@@ -111,13 +119,13 @@ def _sample_weather(reason):
             "feels_like": 88, "condition": "Partly Cloudy", "humidity": "62%",
             "wind": "10 mph", "uv": "7 High",
             "hourly": [
-                {"label":"9 AM","temp":72,"cond":"Partly Cloudy","night":False},
-                {"label":"11 AM","temp":78,"cond":"Clear","night":False},
-                {"label":"1 PM","temp":84,"cond":"Partly Cloudy","night":False},
-                {"label":"3 PM","temp":88,"cond":"Partly Cloudy","night":False},
-                {"label":"5 PM","temp":87,"cond":"Clear","night":False},
-                {"label":"7 PM","temp":82,"cond":"Clear","night":False},
-                {"label":"9 PM","temp":76,"cond":"Clear","night":True},
+                {"label":"9 AM","temp":72,"cond":"Partly Cloudy","night":False,"pop":10,"rain":False},
+                {"label":"11 AM","temp":78,"cond":"Clear","night":False,"pop":10,"rain":False},
+                {"label":"1 PM","temp":84,"cond":"Partly Cloudy","night":False,"pop":40,"rain":True},
+                {"label":"3 PM","temp":88,"cond":"Rain","night":False,"pop":60,"rain":True},
+                {"label":"5 PM","temp":87,"cond":"Rain","night":False,"pop":50,"rain":True},
+                {"label":"7 PM","temp":82,"cond":"Clear","night":False,"pop":20,"rain":True},
+                {"label":"9 PM","temp":76,"cond":"Clear","night":True,"pop":10,"rain":False},
             ]}
 
 # ---------- PARK HOURS ----------
@@ -161,7 +169,7 @@ _EVERGREEN = [
 ]
 
 def fetch_history():
-    with open(os.path.join(HERE,"disney_history.json"), encoding="utf-8") as f:
+    with open(os.path.join(HERE,"disney_history.json")) as f:
         data = json.load(f)
     today = datetime.date.today()
     key = today.strftime("%m-%d")
@@ -195,7 +203,7 @@ def resolve_template(for_date=None):
     """
     d = (for_date or datetime.date.today()).isoformat()
     try:
-        with open(os.path.join(HERE, "schedule.json"), encoding="utf-8") as f:
+        with open(os.path.join(HERE, "schedule.json")) as f:
             sched = json.load(f)
     except Exception:
         return "disney"  # safe fallback if schedule missing/broken
