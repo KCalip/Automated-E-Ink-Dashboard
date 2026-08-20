@@ -169,7 +169,7 @@ _EVERGREEN = [
 ]
 
 def fetch_history():
-    with open(os.path.join(HERE,"disney_history.json")) as f:
+    with open(os.path.join(HERE,"disney_history.json"), encoding="utf-8") as f:
         data = json.load(f)
     today = datetime.date.today()
     key = today.strftime("%m-%d")
@@ -203,7 +203,7 @@ def resolve_template(for_date=None):
     """
     d = (for_date or datetime.date.today()).isoformat()
     try:
-        with open(os.path.join(HERE, "schedule.json")) as f:
+        with open(os.path.join(HERE, "schedule.json"), encoding="utf-8") as f:
             sched = json.load(f)
     except Exception:
         return "disney"  # safe fallback if schedule missing/broken
