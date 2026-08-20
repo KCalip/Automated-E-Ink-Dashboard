@@ -173,7 +173,7 @@
   "02-28": {
     "year": "2004",
     "headline": "Earl of Sandwich / EPCOT Flower & Garden",
-    "blurb": "The Earl of Sandwich opened in Downtown Disney (2004). The 25th EPCOT International Flower & Garden Festival kicked off (2018)."
+    "blurb": "The Earl of Sandwich opened in Downtown Disney (2004).\nThe 25th EPCOT International Flower & Garden Festival kicked off (2018)."
   },
   "02-29": {
     "year": "2012",
@@ -581,19 +581,54 @@
     "blurb": "“Luxo Jr.” became Pixar’s first animated project."
   },
   "08-18": {
-    "year": "2026",
-    "headline": "Line-break test",
-    "blurb": "TEST LINE ONE — does the line break work?\nTEST LINE TWO — if this sits on its own line, the newline renders."
+    "year": "1986",
+    "headline": "Crockett’s Tavern Opens",
+    "blurb": "Crockett’s Tavern opened at Walt Disney World’s Fort Wilderness, part of the Trail’s End Restaurant at the north end of the campground."
+  },
+  "08-19": {
+    "year": "1988",
+    "headline": "Kokomo at the Grand Floridian",
+    "blurb": "The Beach Boys filmed their “Kokomo” video at Disney’s Grand Floridian – the band and John Stamos were the resort’s first guests, before it even opened."
+  },
+  "08-20": {
+    "year": "2017",
+    "headline": "Electrical Parade’s Last Run",
+    "blurb": "Disneyland’s revived Main Street Electrical Parade ran for the final time, as did the Pixar Play Parade at Disney California Adventure."
+  },
+  "08-21": {
+    "year": "2007",
+    "headline": "Muppet Mobile Lab & PeopleMover",
+    "blurb": "The Muppet Mobile Lab – roving robotic Dr. Bunsen Honeydew and Beaker – debuted at EPCOT (2007).\nDisneyland’s PeopleMover closed after 28 years (1995)."
+  },
+  "08-22": {
+    "year": "1929",
+    "headline": "First Silly Symphony & Grand Floridian Cupola",
+    "blurb": "The Skeleton Dance, the first-ever Silly Symphony, was released, directed by Ub Iwerks (1929).\nDisney’s Grand Floridian raised its 10,150-lb cupola during construction (1987)."
+  },
+  "08-23": {
+    "year": "2004",
+    "headline": "Walt Disney Post Office & Hollywood Scoops",
+    "blurb": "Marceline, Missouri renamed its post office the Walt Disney Post Office Building (2004).\nHollywood Scoops ice cream opened on Sunset Blvd at Disney-MGM Studios (1999)."
   },
   "08-24": {
     "year": "1989",
-    "headline": "Ewok Village",
-    "blurb": "The Ewok Village opened at Disney-MGM Studios."
+    "headline": "Ewok Village & Jabali the Elephant",
+    "blurb": "The Ewok Village opened at the entrance to Star Tours at Disney-MGM Studios (1989).\nA male elephant calf, later named Jabali, was born at Disney’s Animal Kingdom (2011)."
   },
   "08-25": {
     "year": "1989",
     "headline": "Indiana Jones Stunt",
     "blurb": "The Indiana Jones Epic Stunt Spectacular! opened at Disney-MGM Studios."
+  },
+  "08-26": {
+    "year": "1918",
+    "headline": "Walt Enlists in WWI",
+    "blurb": "Too young to enlist, Walt Disney forged his parents’ signatures and faked his birth year to join the Red Cross as a WWI ambulance driver."
+  },
+  "08-27": {
+    "year": "1964",
+    "headline": "Mary Poppins Premieres",
+    "blurb": "Mary Poppins had its lavish world premiere at Grauman’s Chinese Theatre. Julie Andrews won the Best Actress Oscar; the film earned five Academy Awards in all."
   },
   "09-02": {
     "year": "1979",

@@ -79,19 +79,46 @@ def draw_cloud(d,cx,cy,w,fill,ink,ow=3):
     d._image.paste(Image.new("RGB",S,fill),(px,py),m)       # fill first
     d._image.paste(Image.new("RGB",S,ink),(px,py),outline)  # clean outer outline
 
-def draw_icon(d,cx,cy,r,cond,cover,night=False,bg=(230,232,220)):
+def draw_drop(d,cx,cy,h,fill,ink):
+    # A real teardrop: pointed top, round bottom. h = total height.
+    w=h*0.62
+    rad=w/2
+    by=cy+h/2-rad          # center of the round bottom
+    # round bottom
+    d.ellipse([cx-rad,by-rad,cx+rad,by+rad],fill=fill,outline=ink,width=1)
+    # pointed top: triangle from the apex down to the circle's sides
+    apex=(cx,cy-h/2)
+    left=(cx-rad*0.98,by)
+    right=(cx+rad*0.98,by)
+    d.polygon([apex,left,right],fill=fill)
+    # thin outline on the two top edges for definition
+    d.line([apex,left],fill=ink,width=1)
+    d.line([apex,right],fill=ink,width=1)
+
+def draw_icon(d,cx,cy,r,cond,cover,night=False,bg=(230,232,220),rain=False):
     c=cond.lower()
     gold=hexrgb("#E8A21E"); cloud=hexrgb("#F2EFE2"); ink=hexrgb("#12333B"); teal=hexrgb("#3E6B6B")
+    drop=hexrgb("#1F5FA8")  # blue raindrop
     ow=2  # outline width (lighter, closer to template cloud)
     if cover:
         d.ellipse([cx-r-6,cy-r-6,cx+r+6,cy+r+6], fill=cover)
 
-    # ---- NIGHT: sun is down. Always just a moon (no clouds, no sun). ----
+    # ---- NIGHT: sun is down. Moon, or cloud+drop if it's raining. ----
     if night:
-        draw_moon(d,cx,cy,r,ink,gold,bg)
+        if rain:
+            draw_cloud(d,cx,cy-r*0.2,r*1.7,cloud,ink,ow)
+            draw_drop(d,cx,cy+r*0.75,r*0.7,drop,ink)
+        else:
+            draw_moon(d,cx,cy,r,ink,gold,bg)
         return
 
-    # ---- DAY ----
+    # ---- DAY: if raining, just cloud + a single droplet (no sun) ----
+    if rain:
+        draw_cloud(d,cx,cy-r*0.15,r*1.8,cloud,ink,ow)
+        draw_drop(d,cx,cy+r*0.9,r*0.7,drop,ink)
+        return
+
+    # ---- DAY, no rain ----
     if "clear" in c:
         d.ellipse([cx-r*0.6,cy-r*0.6,cx+r*0.6,cy+r*0.6],fill=gold,outline=ink,width=ow)
         for a in range(0,360,45):
@@ -141,7 +168,7 @@ def compose(data,eink=False):
         cx=H["cols_center_x"][i]
         cover=bg_sample(bg,cx,H["icon_cy"]) if H.get("cover_icons") else None
         bgcol=bg_sample(bg,cx,H["icon_cy"]-int(H["icon_r"]*0.5))
-        draw_icon(d,cx,H["icon_cy"],H["icon_r"],hr["cond"],cover,hr.get("night",False),bgcol)
+        draw_icon(d,cx,H["icon_cy"],H["icon_r"],hr["cond"],cover,hr.get("night",False),bgcol,hr.get("rain",False))
         d.text((cx,H["temp_y"]),f'{hr["temp"]}\u00b0',font=font("heavy",H["temp_size"]),
                fill=col(H["temp_color"]),anchor="mm")
 
