@@ -18,6 +18,27 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # Tune to taste: lower = more raindrops. 30 keeps Florida's constant low chances quiet.
 RAIN_POP_THRESHOLD = 20
 
+# --- Night rule (for choosing the moon icon) ---------------------------------
+# Simple, predictable rule instead of per-day sunset lookups:
+#   - 9 PM  -> always night (sun is always down by 9 PM in Florida).
+#   - 7 PM  -> night ONLY in the darker part of the year (Oct 11 - Mar 7).
+#             From Mar 8 through Oct 10, sunset is later than 7 PM (DST), so
+#             7 PM shows the real sky (sun/cloud/rain), never a moon.
+#   - earlier hours -> always day.
+# Good-enough approximation while U.S. daylight saving time exists; if DST ever
+# goes away, revisit the 7 PM window.
+def _is_night(hour, today):
+    if hour >= 21:            # 9 PM and later
+        return True
+    if hour == 19:            # 7 PM
+        m, d = today.month, today.day
+        # daylight window = Mar 8 .. Oct 10 (7 PM is still daytime)
+        after_mar8 = (m > 3) or (m == 3 and d >= 8)
+        before_oct11 = (m < 10) or (m == 10 and d <= 10)
+        in_daylight = after_mar8 and before_oct11
+        return not in_daylight
+    return False              # 5 PM and earlier
+
 # RBC / Runaway Beach Club, Kissimmee FL (Disney area)
 LAT, LON = 28.3086, -81.4326
 TZ = "America/New_York"
@@ -43,19 +64,13 @@ def fetch_weather():
             f"?latitude={LAT}&longitude={LON}"
             "&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,apparent_temperature"
             "&hourly=temperature_2m,weather_code,precipitation_probability"
-            "&daily=temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset"
+            "&daily=temperature_2m_max,temperature_2m_min,uv_index_max"
             f"&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone={TZ.replace('/','%2F')}"
             "&forecast_days=1"
         )
         d = _get_json(url)
         cur = d["current"]; daily = d["daily"]; hourly = d["hourly"]
-
-        # sunrise/sunset hour (local) for day/night icon logic
-        try:
-            sr = int(daily["sunrise"][0][11:13])
-            ss = int(daily["sunset"][0][11:13])
-        except Exception:
-            sr, ss = 7, 20  # sensible Florida fallback
+        today = datetime.date.today()
 
         # pick 9,11,13,15,17,19,21 local from hourly arrays
         want = [9, 11, 13, 15, 17, 19, 21]
@@ -71,7 +86,7 @@ def fetch_weather():
         for h in want:
             if h in by_hour:
                 tp, cond, pop = by_hour[h]
-                is_night = (h < sr) or (h >= ss)
+                is_night = _is_night(h, today)
                 # show a raindrop only when rain is worth noting
                 rain = pop >= RAIN_POP_THRESHOLD
                 hrly.append({"label": _fmt_hour(h), "temp": tp, "cond": cond,
@@ -169,7 +184,7 @@ _EVERGREEN = [
 ]
 
 def fetch_history():
-    with open(os.path.join(HERE,"disney_history.json"), encoding="utf-8") as f:
+    with open(os.path.join(HERE,"disney_history.json")) as f:
         data = json.load(f)
     today = datetime.date.today()
     key = today.strftime("%m-%d")
@@ -203,7 +218,7 @@ def resolve_template(for_date=None):
     """
     d = (for_date or datetime.date.today()).isoformat()
     try:
-        with open(os.path.join(HERE, "schedule.json"), encoding="utf-8") as f:
+        with open(os.path.join(HERE, "schedule.json")) as f:
             sched = json.load(f)
     except Exception:
         return "disney"  # safe fallback if schedule missing/broken
