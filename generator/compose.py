@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 from fetch_data import gather
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-L = json.load(open(os.path.join(HERE,"layout.json"), encoding="utf-8"))
+L = json.load(open(os.path.join(HERE,"layout.json")))
 PAL = L["palette"]
 FA = {"heavy":"Poppins-Bold","semi":"Poppins-SemiBold","body":"Poppins-Regular","script":"Pacifico-Regular"}
 FF = {"Poppins-Bold":"fonts/Poppins-Bold.ttf","Poppins-SemiBold":"fonts/Poppins-SemiBold.ttf","Poppins-Regular":"fonts/Poppins-Regular.ttf","Pacifico-Regular":"fonts/Pacifico-Regular.ttf"}
@@ -106,24 +106,24 @@ def draw_icon(d,cx,cy,r,cond,cover,night=False,bg=(230,232,220),rain=False):
     # ---- NIGHT: sun is down. Moon, or cloud+drop if it's raining. ----
     if night:
         if rain:
-            draw_cloud(d,cx,cy-r*0.2,r*1.7,cloud,ink,ow)
-            draw_drop(d,cx,cy+r*0.75,r*0.7,drop,ink)
+            draw_cloud(d,cx,cy-r*0.28,r*1.7,cloud,ink,ow)
+            draw_drop(d,cx,cy+r*0.62,r*0.62,drop,ink)
         else:
             draw_moon(d,cx,cy,r,ink,gold,bg)
         return
 
     # ---- DAY: if raining, just cloud + a single droplet (no sun) ----
     if rain:
-        draw_cloud(d,cx,cy-r*0.15,r*1.8,cloud,ink,ow)
-        draw_drop(d,cx,cy+r*0.9,r*0.7,drop,ink)
+        draw_cloud(d,cx,cy-r*0.28,r*1.75,cloud,ink,ow)
+        draw_drop(d,cx,cy+r*0.62,r*0.62,drop,ink)
         return
 
     # ---- DAY, no rain ----
     if "clear" in c:
         d.ellipse([cx-r*0.6,cy-r*0.6,cx+r*0.6,cy+r*0.6],fill=gold,outline=ink,width=ow)
         for a in range(0,360,45):
-            x1=cx+math.cos(math.radians(a))*r*0.78; y1=cy+math.sin(math.radians(a))*r*0.78
-            x2=cx+math.cos(math.radians(a))*r*1.05; y2=cy+math.sin(math.radians(a))*r*1.05
+            x1=cx+math.cos(math.radians(a))*r*0.72; y1=cy+math.sin(math.radians(a))*r*0.72
+            x2=cx+math.cos(math.radians(a))*r*0.96; y2=cy+math.sin(math.radians(a))*r*0.96
             d.line([x1,y1,x2,y2],fill=gold,width=4)
     elif "part" in c or ("cloud" in c and "very" not in c):
         # sun in upper-left, fair-weather cloud overlapping its lower-right (like reference)
