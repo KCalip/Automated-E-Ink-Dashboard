@@ -4,7 +4,7 @@ name: Daily Dashboard Update
 # to test without waiting for the schedule.
 on:
   schedule:
-    - cron: "0 10 * * *"  # 6:00 AM Eastern (EDT, UTC-4). Becomes 5:00 AM
+    - cron: "0 8 * * *"  # 4:00 AM Eastern (EDT, UTC-4). Becomes 3:00 AM
                             # Eastern during EST (winter, UTC-5) since GitHub
                             # cron doesn't follow Daylight Saving. If that hour
                             # drift bothers you, change to "0 11 * * *" each
