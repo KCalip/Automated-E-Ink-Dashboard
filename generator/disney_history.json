@@ -643,7 +643,7 @@
   "08-30": {
     "year": "1994",
     "headline": "WDW Groundbreakings & American Idol Closes",
-    "blurb": "Disney’s Wedding Pavilion breaks ground (1994).\nCoronado Springs Resort breaks ground (1995).\nThe American Idol Experience closes at Hollywood Studios (2014)."
+    "blurb": "Disney’s Wedding Pavilion breaks ground (1994).\nCoronado Springs Resort breaks ground (1995).\nAmerican Idol Experience closes (2014)."
   },
   "08-31": {
     "year": "2009",
@@ -680,10 +680,30 @@
     "headline": "America on Parade",
     "blurb": "America on Parade ended at Disneyland and the Magic Kingdom."
   },
+  "09-07": {
+    "year": "1984",
+    "headline": "Morocco, 1 Billionth Guest, Mr. Toad",
+    "blurb": "1984: Morocco pavilion opens at EPCOT\n1994: WDW welcomes its 1 billionth guest\n1998: Mr. Toad’s Wild Ride closes at MK"
+  },
+  "09-08": {
+    "year": "2004",
+    "headline": "Frank Thomas Dies",
+    "blurb": "Frank Thomas, one of Walt’s Nine Old Men, died after a 43-year career; his films include Pinocchio, Bambi, Cinderella, Peter Pan, and Jungle Book."
+  },
+  "09-09": {
+    "year": "1973",
+    "headline": "Carousel of Progress & Country Bears",
+    "blurb": "1973: Carousel of Progress leaves DL for WDW\n2001: Country Bear Jamboree closes at Disneyland"
+  },
   "09-10": {
     "year": "2009",
     "headline": "First D23 Expo",
     "blurb": "The first D23 Expo debuted at the Anaheim Convention Center."
+  },
+  "09-11": {
+    "year": "2001",
+    "headline": "Parks Close After September 11",
+    "blurb": "Walt Disney World and Disneyland closed following the September 11 attacks. Only the 2nd time in history Disney parks closed following national tragedy (JFK 1963)"
   },
   "09-12": {
     "year": "2005",
@@ -777,8 +797,8 @@
   },
   "11-09": {
     "year": "1994",
-    "headline": "[TEST COPY OF 08-30 — REMOVE AFTER PREVIEW]",
-    "blurb": "Disney’s Wedding Pavilion breaks ground (1994).\nCoronado Springs Resort breaks ground (1995).\nThe American Idol Experience closes at Hollywood Studios (2014)."
+    "headline": "Skyway Closes — Both Coasts",
+    "blurb": "1994: The Skyway closes at Disneyland.\n1999: The Skyway closes at Magic Kingdom — exactly 5 years later."
   },
   "11-14": {
     "year": "2007",
@@ -795,6 +815,11 @@
     "headline": "Turtle Talk",
     "blurb": "Turtle Talk with Crush opened at EPCOT."
   },
+  "11-17": {
+    "year": "1994",
+    "headline": "[TEST COPY OF 08-30 — REMOVE AFTER PREVIEW]",
+    "blurb": "Disney’s Wedding Pavilion breaks ground (1994).\nCoronado Springs Resort breaks ground (1995).\nAmerican Idol Experience closes (2014)."
+  },
   "11-18": {
     "year": "1928",
     "headline": "Mickey Mouse Debuts",
@@ -804,6 +829,11 @@
     "year": "1971",
     "headline": "Fort Wilderness",
     "blurb": "Disney’s Fort Wilderness Resort opened at Walt Disney World."
+  },
+  "11-20": {
+    "year": "1998",
+    "headline": "A Bug’s Life & The Incredible Journey",
+    "blurb": "1998: Disney·Pixar’s A Bug’s Life premieres\n1963: The Incredible Journey premieres,\nlater remade as Homeward Bound"
   },
   "11-21": {
     "year": "1994",
@@ -815,10 +845,45 @@
     "headline": "Beauty and the Beast Stage",
     "blurb": "Beauty and the Beast Live on Stage opened at Disney-MGM Studios."
   },
+  "11-23": {
+    "year": "2016",
+    "headline": "Moana Opens",
+    "blurb": "Moana opened in U.S. theaters — Walt Disney Animation’s voyage with a spirited islander and the demigod Maui, songs co-written by Lin-Manuel Miranda."
+  },
+  "11-24": {
+    "year": "1999",
+    "headline": "Toy Story 2, Tangled, Encanto",
+    "blurb": "1999: Toy Story 2 released in theaters\n2010: Tangled released in theaters\n2021: Encanto released in theaters"
+  },
+  "11-25": {
+    "year": "1992",
+    "headline": "Aladdin Released",
+    "blurb": "Aladdin released in theaters — Disney’s 31st animated feature, with Robin Williams as the Genie and an Alan Menken score."
+  },
+  "11-26": {
+    "year": "1971",
+    "headline": "WDW Closes Its Gates — First Time Ever",
+    "blurb": "Just weeks after opening, Walt Disney World closed its gates for the first time ever — Thanksgiving-weekend crowds filled the park to capacity."
+  },
+  "11-27": {
+    "year": "2013",
+    "headline": "Frozen & Turnstile-Free Magic Kingdom",
+    "blurb": "- Frozen opens in theaters\n- Magic Kingdom goes turnstile-free"
+  },
+  "11-28": {
+    "year": "1974",
+    "headline": "StarJets Open (now Astro Orbiter)",
+    "blurb": "The StarJets opened in Magic Kingdom’s Tomorrowland; refurbished in 1994, it’s the ride guests know today as Astro Orbiter."
+  },
   "11-29": {
     "year": "1934",
     "headline": "First Macy’s balloon",
     "blurb": "Disney’s first balloon appeared in the Macy’s Thanksgiving Day Parade."
+  },
+  "11-30": {
+    "year": "2010",
+    "headline": "Epic Mickey Released",
+    "blurb": "The Epic Mickey video game launched in North America — Warren Spector’s Wii adventure made to re-brand Mickey Mouse."
   },
   "12-01": {
     "year": "2004",
